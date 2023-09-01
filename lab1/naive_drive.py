@@ -10,7 +10,7 @@ SERVO_OFFSET = 7 # customize to make the servo point straight forward at angle z
 ANGLE_RANGE = 144
 STEP = 18
 us_step = STEP
-#inital scan angle is set to 90
+#inital scan angle is set to 72
 current_angle = 72
 max_angle = ANGLE_RANGE/2
 min_angle = -ANGLE_RANGE/2
@@ -78,7 +78,7 @@ def naive_drive():
         scan_range = scan_list[0:7] 
         print("scan_range:", scan_range)
       
-        if 1 in scan_range:
+        if 1 in scan_range or 0 in scan_range:
             fc.stop()
             fc.backward(BACKWARD_SPEED)
             time.sleep(0.2)
