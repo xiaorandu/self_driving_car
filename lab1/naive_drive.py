@@ -5,7 +5,7 @@ from picar_4wd import servo
 FORWARD_SPEED = 15
 BACKWARD_SPEED = 10
 DIST_TO_OBSTACLE = 30
-SERVO_OFFSET = 8 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero.
+SERVO_OFFSET = 7 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero.
 
 ANGLE_RANGE = 180
 STEP = 18
@@ -38,7 +38,7 @@ def scan_step(ref):
         return False
 
 def naive_drive():
-    servo.offset = 8
+    servo.offset = SERVO_OFFSET
     servo.set_angle(0)
     
     while True:
