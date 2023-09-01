@@ -9,7 +9,6 @@ DIST_TO_OBSTACLE = 30
 ANGLE_RANGE = 180
 STEP = 18
 us_step = STEP
-angle_distance = [0,0]
 #inital scan angle is set to 90
 current_angle = 90
 max_angle = ANGLE_RANGE/2
