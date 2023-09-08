@@ -1,5 +1,52 @@
 # TensorFlow Lite Python object detection example with Raspberry Pi
 
+## Lab 1B: Step 6: Object Detection
+
+### Quick setup steps (bruffridge)
+
+#### Prerequisites
+
+`sudo raspi-config`
+Interface Options -> Enable legacy camera support
+Reboot Rasberry Pi
+
+```
+sudo apt-get update && sudo apt-get upgrade
+sudo apt-get install libatlas-base-dev
+
+#installed but might not have needed to
+sudo apt-get install libv4l-dev
+
+#haven't installed these yet. The article claims they are required for opencv.
+sudo apt-get install gfortran
+sudo apt-get install build-essential cmake pkg-config
+sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng-dev
+sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+sudo apt-get install libxvidcore-dev libx264-dev
+sudo apt-get install libfontconfig1-dev libcairo2-dev
+sudo apt-get install libgdk-pixbuf2.0-dev libpango1.0-dev
+sudo apt-get install libgtk2.0-dev libgtk-3-dev
+
+sudo apt-get install libhdf5-dev libhdf5-serial-dev libhdf5-103
+sudo apt-get install libqtgui4 libqtwebkit4 libqt4-test python3-pyqt5
+sudo apt-get install python3-dev
+```
+
+#### Running Object Detection sample
+
+```
+cd self_driving_car/lab1/object_detection
+# The script install the required dependencies and download the TFLite models.
+sh setup.sh
+```
+
+Run the example. If you have your Pi connected to a monitor in desktop mode it will open a window showing the camera with bounding boxes around detected objects:
+```
+python3 detect.py --model efficientdet_lite0.tflite
+```
+
+## Original Documentation
+
 This example uses [TensorFlow Lite](https://tensorflow.org/lite) with Python on
 a Raspberry Pi to perform real-time object detection using images streamed from
 the Pi Camera. It draws a bounding box around each detected object in the camera
