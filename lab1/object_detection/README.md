@@ -6,8 +6,8 @@
 
 #### Prerequisites
 
-`sudo raspi-config`
-Interface Options -> Enable legacy camera support
+`sudo raspi-config`    
+Interface Options -> Enable legacy camera support    
 Reboot Rasberry Pi
 
 ```
