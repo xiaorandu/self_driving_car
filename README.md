@@ -6,8 +6,8 @@ For more information about the code this was derived from: https://github.com/te
 
 #### Prerequisites
 
-`sudo raspi-config`
-Interface Options -> Enable legacy camera support
+`sudo raspi-config`    
+Interface Options -> Enable legacy camera support    
 Reboot Rasberry Pi
 
 ```
