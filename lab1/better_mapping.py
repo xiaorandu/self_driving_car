@@ -8,7 +8,7 @@ BACKWARD_SPEED = 10
 DIST_TO_OBSTACLE = 35
 SERVO_OFFSET = 7 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero.
 
-ANGLE_RANGE = 180
+ANGLE_RANGE = 144
 STEP = 18
 us_step = STEP
 #inital scan angle is set to 72
@@ -20,10 +20,14 @@ angle_to_dist = {}
 
 def map_obstacles(angle_to_dist: dict, obstacle_map: np.array) -> np.array:
     for angle, distance in angle_to_dist.items():
+        print(f"angle:\t{angle}")
         if distance:
             # Convert polar coordinates to Cartesian coordinates
-            x = int(distance * np.cos(np.radians(angle)))
-            y = int(distance * np.sin(np.radians(angle)))
+            # x = int(distance * np.sin(np.radians(angle)))
+            # y = int(distance * np.cos(np.radians(angle)))
+            # TODO: should this be done with radians???
+            x = int(distance * np.sin(angle))
+            y = int(distance * np.cos(angle))
             print(f"x {x}")
             print(f"y {y}")
             
