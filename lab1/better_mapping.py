@@ -1,7 +1,7 @@
 import picar_4wd as fc
 import time
 from picar_4wd import servo
-import numpy as np
+from obstacle_map import ObstacleMap
 
 FORWARD_SPEED = 10
 BACKWARD_SPEED = 10
@@ -18,25 +18,6 @@ min_angle = -ANGLE_RANGE/2
 scan_list = []
 angle_to_dist = {}
 
-def map_obstacles(angle_to_dist: dict, obstacle_map: np.array) -> np.array:
-    for angle, distance in angle_to_dist.items():
-        print(f"angle:\t{angle}")
-        if distance:
-            # Convert polar coordinates to Cartesian coordinates
-            # x = int(distance * np.sin(np.radians(angle)))
-            # y = int(distance * np.cos(np.radians(angle)))
-            # TODO: should this be done with radians???
-            x = int(distance * np.sin(angle))
-            y = int(distance * np.cos(angle))
-            print(f"x {x}")
-            print(f"y {y}")
-            
-            # Ensure the coordinates are within the bounds of the array
-            if 0 <= x < 100 and 0 <= y < 100:
-                # Mark the obstacle position on the map
-                obstacle_map[x][y] = 1
-    
-    return obstacle_map
 
 #returns a 1 for turn right, 0 for turn left.
 def more_space_right(arr):
@@ -95,15 +76,14 @@ def naive_drive():
     servo.offset = SERVO_OFFSET
     servo.set_angle(0)
 
-    obstacle_map = np.zeros((100, 100))
+    obstacle_map = ObstacleMap(100)
     
     while True:
         scan_list, angle_to_dist = scan_step(DIST_TO_OBSTACLE)
         if not scan_list:
             continue
         
-        # print(f"angle_to_dist:\t{angle_to_dist}")
-        obstacle_map = map_obstacles(angle_to_dist=angle_to_dist, obstacle_map=obstacle_map)
+        obstacle_map.map(angle_to_dist=angle_to_dist)
         
         #scan angular range 54° through -54°
         scan_range = scan_list[0:7] 
@@ -111,6 +91,7 @@ def naive_drive():
         print(f"obs map:\t{obstacle_map}")
       
         if 1 in scan_range or 0 in scan_range:
+            obstacle_map
             fc.stop()
             fc.backward(BACKWARD_SPEED)
             time.sleep(0.2)
