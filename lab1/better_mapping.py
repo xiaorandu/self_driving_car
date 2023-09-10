@@ -91,7 +91,8 @@ def naive_drive():
         print(f"obs map:\t{obstacle_map}")
       
         if 1 in scan_range or 0 in scan_range:
-            obstacle_map
+            obstacle_map.set_update(to_set=False)
+            obstacle_map.reset_map()
             fc.stop()
             fc.backward(BACKWARD_SPEED)
             time.sleep(0.2)
@@ -105,6 +106,7 @@ def naive_drive():
                 #pass
        
         else:
+            obstacle_map.set_update(to_set=True)
             fc.forward(FORWARD_SPEED)
 
 if __name__ == "__main__":
