@@ -24,6 +24,8 @@ def map_obstacles(angle_to_dist: dict, obstacle_map: np.array) -> np.array:
             # Convert polar coordinates to Cartesian coordinates
             x = int(distance * np.cos(np.radians(angle)))
             y = int(distance * np.sin(np.radians(angle)))
+            print(f"x {x}")
+            print(f"y {y}")
             
             # Ensure the coordinates are within the bounds of the array
             if 0 <= x < 100 and 0 <= y < 100:
