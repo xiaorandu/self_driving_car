@@ -96,12 +96,13 @@ def naive_drive():
         if not scan_list:
             continue
         
+        # print(f"angle_to_dist:\t{angle_to_dist}")
         obstacle_map = map_obstacles(angle_to_dist=angle_to_dist, obstacle_map=obstacle_map)
         
         #scan angular range 54° through -54°
         scan_range = scan_list[0:7] 
         print(f"scan_range:\t{scan_range}")
-        print(f"dist_list:\t{dist_list}")
+        print(f"obs map:\t{obstacle_map}")
       
         if 1 in scan_range or 0 in scan_range:
             fc.stop()
