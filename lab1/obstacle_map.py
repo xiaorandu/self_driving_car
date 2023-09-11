@@ -13,6 +13,7 @@ class ObstacleMap:
         self.update = to_set
 
     def reset_map(self) -> None:
+        print("Resetting obastacle map")
         self.obstacle_map = np.zeros((self.size, self.size), dtype=int)
 
     def map(self, angle_to_dist: dict) -> None:
@@ -24,7 +25,7 @@ class ObstacleMap:
                     # x = int(distance * np.sin(np.radians(angle)))
                     # y = int(distance * np.cos(np.radians(angle)))
                     # FIXME: should this be done with radians???
-                    x = int(distance * np.sin(angle))
+                    x = (self.size / 2) + int(distance * np.sin(angle))
                     y = int(distance * np.cos(angle))
                     print(f"x {x}")
                     print(f"y {y}")

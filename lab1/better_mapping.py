@@ -76,7 +76,7 @@ def naive_drive():
     servo.offset = SERVO_OFFSET
     servo.set_angle(0)
 
-    obstacle_map = ObstacleMap(100)
+    obstacle_map = ObstacleMap(size=100)
     
     while True:
         scan_list, angle_to_dist = scan_step(DIST_TO_OBSTACLE)
@@ -88,7 +88,6 @@ def naive_drive():
         #scan angular range 54° through -54°
         scan_range = scan_list[0:7] 
         print(f"scan_range:\t{scan_range}")
-        print(f"obs map:\t{obstacle_map}")
       
         if 1 in scan_range or 0 in scan_range:
             obstacle_map.set_update(to_set=False)
