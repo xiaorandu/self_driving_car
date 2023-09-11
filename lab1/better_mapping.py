@@ -76,7 +76,7 @@ def naive_drive():
     servo.offset = SERVO_OFFSET
     servo.set_angle(0)
 
-    obstacle_map = ObstacleMap(size=100)
+    obstacle_map = ObstacleMap(size=100, debug=True)
     
     while True:
         scan_list, angle_to_dist = scan_step(DIST_TO_OBSTACLE)

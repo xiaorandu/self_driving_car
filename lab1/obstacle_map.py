@@ -1,19 +1,27 @@
 import numpy as np
+import sys
 
 class ObstacleMap:
     """
     Mantains a map of the environment by populating a 2d array while moving forward
     """
-    def __init__(self, size: int = 100) -> None:
+    def __init__(self, size: int = 100, debug: bool = False) -> None:
         self.size = size
         self.update = False
+        self.debug = debug
         self.obstacle_map = np.zeros((size, size), dtype=int)
+
+        if self.debug:
+            import sys
+            np.set_printoptions(threshold=sys.maxsize)
+
 
     def set_update(self, to_set: bool) -> None:
         self.update = to_set
 
     def reset_map(self) -> None:
-        print(f"Resetting obastacle map\n{self.obstacle_map}")
+        if self.debug:
+            print(f"Resetting obstacle map\n{self.obstacle_map}")
         self.obstacle_map = np.zeros((self.size, self.size), dtype=int)
 
     def map(self, angle_to_dist: dict) -> None:
