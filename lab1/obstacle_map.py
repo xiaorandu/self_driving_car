@@ -17,13 +17,9 @@ class ObstacleMap:
         self.obstacle_map = np.zeros((self.size, self.size), dtype=int)
 
     def map(self, angle_to_dist: dict) -> None:
-        def shade_objects(self) -> None:
-            pass
-
         if self.update:
             new_points = []
             for angle, distance in angle_to_dist.items():
-                # print(f"angle:\t{angle}")
                 if distance >= 0:
                     # Convert polar coordinates to Cartesian coordinates
                     # x = int(distance * np.sin(np.radians(angle)))
