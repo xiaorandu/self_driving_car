@@ -21,17 +21,15 @@ class ObstacleMap:
             new_points = []
             for angle, distance in angle_to_dist.items():
                 if distance >= 0:
-                    # Convert polar coordinates to Cartesian coordinates
                     # x = int(distance * np.sin(np.radians(angle)))
                     # y = int(distance * np.cos(np.radians(angle)))
                     # FIXME: should this be done with radians???
                     x = int((self.size / 2) + int(distance * np.sin(angle)))
                     y = int(distance * np.cos(angle))
-                    new_points.append((x, y))
                     
                     # Ensure the coordinates are within the bounds of the array
                     if 0 <= x < self.size and 0 <= y < self.size:
-                        # Mark the obstacle position on the map
+                        new_points.append((x, y))
                         self.obstacle_map[x][y] = 1
                 else:
                     new_points.append((None, None))
