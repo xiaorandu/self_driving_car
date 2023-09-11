@@ -6,7 +6,7 @@ from obstacle_map import ObstacleMap
 FORWARD_SPEED = 10
 BACKWARD_SPEED = 10
 DIST_TO_OBSTACLE = 35
-SERVO_OFFSET = 7 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero.
+SERVO_OFFSET = 45 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero.
 
 ANGLE_RANGE = 144
 STEP = 18
