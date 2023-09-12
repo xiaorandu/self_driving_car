@@ -45,6 +45,20 @@ Run the example. If you have your Pi connected to a monitor in desktop mode it w
 python3 detect.py --model efficientdet_lite0.tflite
 ```
 
+### Running Object Detection in headless mode
+
+This mode is used for programmable smart car object detection. It won't display a window showing the camera feed and bounding boxes.
+```
+python3 detect_cli.py --model efficientdet_lite0.tflite
+```
+
+### Hardware acceleration
+
+I get 6.7 FPS. It will likely be higher when running in headless mode without displaying the camera feed window and bounding boxes.
+OpenCV hardware acceleration: https://pyimagesearch.com/2017/10/09/optimizing-opencv-on-the-raspberry-pi/
+TensorFlow can be improved with Coral Edge TPU USB Accelerator: https://towardsdatascience.com/3-ways-to-install-tensorflow-2-on-raspberry-pi-fe1fa2da9104
+
+
 ## Original Documentation
 
 This example uses [TensorFlow Lite](https://tensorflow.org/lite) with Python on
