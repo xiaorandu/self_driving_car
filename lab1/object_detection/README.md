@@ -17,6 +17,11 @@ sudo apt-get install libatlas-base-dev
 #installed but might not have needed to
 sudo apt-get install libv4l-dev
 
+# for opencv 4.8.0 hardware optimized
+wget https://github.com/prepkg/opencv-raspberrypi/releases/latest/download/opencv.deb
+sudo apt install -y ./opencv.deb
+rm -rf opencv.deb
+
 #haven't installed these yet. The article claims they are required for opencv.
 sudo apt-get install gfortran
 sudo apt-get install build-essential cmake pkg-config

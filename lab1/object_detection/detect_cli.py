@@ -36,8 +36,14 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
     enable_edgetpu: True/False whether the model is a EdgeTPU model.
   """
 
+  # Variables to calculate FPS
+  counter, fps = 0, 0
+  start_time = time.time()
+  fps_avg_frame_count = 10
+
   # Start capturing video input from the camera
   cap = cv2.VideoCapture(camera_id)
+  #print(cv2.getBuildInformation())
   cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
   cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
@@ -58,6 +64,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
         'ERROR: Unable to read from webcam. Please verify your webcam settings.'
       )
 
+    counter += 1
     image = cv2.flip(image, -1) # -1 flips the image horizontally and vertically. 1 flips horizontally. 0 flips vertically.
 
     # Convert the image from BGR to RGB as required by the TFLite model.
@@ -68,6 +75,16 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
 
     # Run object detection estimation using the model.
     detection_result = detector.detect(input_tensor)
+
+    # Calculate the FPS
+    if counter % fps_avg_frame_count == 0:
+      end_time = time.time()
+      fps = fps_avg_frame_count / (end_time - start_time)
+      start_time = time.time()
+
+    # Show the FPS
+    fps_text = 'FPS = {:.1f}'.format(fps)
+    #print(fps_text)
 
     # Detect specific objects
     for detection in detection_result.detections:
