@@ -14,7 +14,7 @@ Reboot Rasberry Pi
 sudo apt-get update && sudo apt-get upgrade
 sudo apt-get install libatlas-base-dev
 
-#installed but might not have needed to
+#installed this but might not have needed to
 sudo apt-get install libv4l-dev
 
 # for opencv 4.8.0 hardware optimized
@@ -22,7 +22,12 @@ wget https://github.com/prepkg/opencv-raspberrypi/releases/latest/download/openc
 sudo apt install -y ./opencv.deb
 rm -rf opencv.deb
 
-#haven't installed these yet. The article claims they are required for opencv.
+# for opencv 4.8.0 hardware optimized
+wget https://github.com/prepkg/opencv-raspberrypi/releases/latest/download/opencv.deb
+sudo apt install -y ./opencv.deb
+rm -rf opencv.deb
+
+#The article claims these are required for opencv but I didn't need them.
 sudo apt-get install gfortran
 sudo apt-get install build-essential cmake pkg-config
 sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng-dev
