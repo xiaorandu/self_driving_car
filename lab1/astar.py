@@ -4,7 +4,6 @@ from obstacle_map import ObstacleMap
 DIRECTIONS = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 class Node:
     def __init__(self, row, col, val):
-        self.idx = ""
         self.row = row
         self.col = col
         self.val = val
