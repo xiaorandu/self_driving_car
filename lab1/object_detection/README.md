@@ -14,10 +14,10 @@ Reboot Rasberry Pi
 sudo apt-get update && sudo apt-get upgrade
 sudo apt-get install libatlas-base-dev
 
-#installed but might not have needed to
+#installed this but might not have needed to
 sudo apt-get install libv4l-dev
 
-#haven't installed these yet. The article claims they are required for opencv.
+#The article claims these are required for opencv but I didn't need them.
 sudo apt-get install gfortran
 sudo apt-get install build-essential cmake pkg-config
 sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng-dev
