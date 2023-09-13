@@ -2,6 +2,7 @@ import picar_4wd as fc
 import time
 from picar_4wd import servo
 from obstacle_map import ObstacleMap
+from Picar import Picar, Direction
 
 FORWARD_SPEED = 10
 BACKWARD_SPEED = 10
@@ -83,15 +84,12 @@ def naive_drive():
         if not scan_list:
             continue
         
-        obstacle_map.map(angle_to_dist=angle_to_dist)
         
         #scan angular range 54° through -54°
         scan_range = scan_list[0:7] 
         print(f"scan_range:\t{scan_range}")
       
         if 1 in scan_range or 0 in scan_range:
-            obstacle_map.set_update(to_set=False)
-            obstacle_map.reset_map()
             fc.stop()
             fc.backward(BACKWARD_SPEED)
             time.sleep(0.2)
@@ -99,17 +97,41 @@ def naive_drive():
             # which side of the obstacle can we see more around?
             if more_space_right(scan_range):
                 fc.turn_right(FORWARD_SPEED)
-                #pass
             else:
                 fc.turn_left(FORWARD_SPEED)
-                #pass
        
         else:
-            obstacle_map.set_update(to_set=True)
             fc.forward(FORWARD_SPEED)
+
+def avoid_obstacles():
+    car = Picar()
+    car.scan_env_and_map()
+    path = car.find_path()
+
+    for tup in path:
+        to_steer = car.get_direction(tup[0], tup[1])
+        
+        # FIXME: none of these have been checked
+        if to_steer == (0, 1):
+            car.forward()
+        elif to_steer == (1, 0):
+            car.turn_right()
+            time.sleep(1)
+            car.forward()
+        elif to_steer == (0, -1):
+            car.backward()
+        elif to_steer == (-1, 0):
+            car.turn_left()
+            time.sleep(1)
+            car.forward()
+        
+
+
+
 
 if __name__ == "__main__":
     try: 
-        naive_drive()
+        # naive_drive()
+        avoid_obstacles()
     finally: 
         fc.stop()
