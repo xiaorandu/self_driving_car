@@ -124,6 +124,8 @@ def avoid_obstacles():
             car.turn_left()
             time.sleep(1)
             car.forward()
+        
+        time.sleep(1)
 
         car.update_location(to_steer)
         
