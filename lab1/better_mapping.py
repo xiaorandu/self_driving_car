@@ -126,7 +126,7 @@ def avoid_obstacles():
             time.sleep(1)
             car.forward()
         
-        time.sleep(1)
+        time.sleep(.125)
 
         car.update_location(to_steer)
         
