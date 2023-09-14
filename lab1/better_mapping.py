@@ -109,6 +109,7 @@ def avoid_obstacles():
     path = car.find_path()
 
     for tup in path:
+        print(f"To move: {tup}")
         to_steer = car.get_direction(tup[0], tup[1])
         
         # FIXME: none of these have been checked
