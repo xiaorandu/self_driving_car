@@ -69,5 +69,9 @@ class Picar:
         return path
     
     def get_direction(self, x_dest, y_dest) -> tuple:
-        to_steer = (x_dest - self.location[0], y_dest - self.location[1])
+        to_steer = (int(x_dest - self.location[0]), int(y_dest - self.location[1]))
         return to_steer
+    
+    def update_location(self, to_steer: tuple) -> None:
+        self.location[0] += to_steer[0]
+        self.location[1] += to_steer[1]
