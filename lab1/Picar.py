@@ -30,7 +30,7 @@ class Picar:
 
 
         self.obstacle_map = ObstacleMap()
-        self.location = (self.obstacle_map.size / 2, 0) # (x, y)
+        self.location = (int(self.obstacle_map.size / 2), 0) # (x, y)
         self.angle_to_dist = {}
 
 
