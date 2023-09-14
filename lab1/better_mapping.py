@@ -106,7 +106,7 @@ def naive_drive():
 def avoid_obstacles():
     car = Picar()
     car.scan_env_and_map()
-    path = car.find_path()
+    path = car.find_path(end_row=50, end_col=99)
 
     for tup in path:
         print(f"To move: {tup}")
@@ -126,7 +126,7 @@ def avoid_obstacles():
             time.sleep(1)
             car.forward()
         
-        time.sleep(.12)
+        time.sleep(.1)
 
         car.update_location(to_steer)
         

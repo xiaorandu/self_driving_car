@@ -85,8 +85,7 @@ def get_path(end):
     while curr.prev:
         path.append((curr.prev.row,curr.prev.col,curr.prev.f))
         curr = curr.prev
-        
-    print(path[::-1])
+    
     return path[::-1]
 
 if __name__ == "__main__":
