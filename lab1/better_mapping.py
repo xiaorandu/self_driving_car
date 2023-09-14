@@ -2,7 +2,7 @@ import picar_4wd as fc
 import time
 from picar_4wd import servo
 from obstacle_map import ObstacleMap
-from Picar import Picar, Direction
+from Picar import Picar
 
 FORWARD_SPEED = 10
 BACKWARD_SPEED = 10

@@ -23,6 +23,10 @@ class ObstacleMap:
             print(f"Resetting obstacle map\n{self.obstacle_map}")
         self.obstacle_map = np.zeros((self.size, self.size), dtype=int)
 
+    def get_map(self) -> np.typing.NDArray:
+        return self.obstacle_map
+
+
     def do_map(self, angle_to_dist: dict) -> None:
         new_points = []
         for angle, distance in angle_to_dist.items():
