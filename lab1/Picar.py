@@ -63,7 +63,7 @@ class Picar:
     
     def find_path(self) -> list[tuple]:
         # TODO: find end destination
-        path = astar(self.location[0], self.location[1], 100, 50, self.obstacle_map) # FIXME: get end destination
+        path = astar(self.location[0], self.location[1], 100, 50, self.obstacle_map.get_map()) # FIXME: get end destination
         print(f"Astar path:\t{path}")
 
         return path
