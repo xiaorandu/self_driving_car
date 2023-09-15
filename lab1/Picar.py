@@ -25,6 +25,12 @@ class Direction(Enum):
     WEST = 4
 
 
+coords_to_direction ={
+    (0, 0): Direction.NORTH,
+    (0, 1): Direction.EAST,
+    (-1, 0): Direction.SOUTH,
+    (0, -1): Direction.WEST,
+}
 
 class Picar:
     def __init__(self):
@@ -68,10 +74,8 @@ class Picar:
     def stop(self) -> None:
         fc.stop()
 
-    def change_orientation(self, to_steer: Direction) -> None:
-        if to_steer == (0,0):
-            return
-        self.orientation = self.direction_map[self.orientation][to_steer]
+    def change_orientation(self, dir_to_steer: Direction) -> None:
+        self.orientation = self.direction_map[self.orientation][dir_to_steer]
 
     def scan_env_and_map(self) -> None:
         self.angle_to_dist = {}
@@ -92,7 +96,7 @@ class Picar:
     def get_direction(self, x_dest, y_dest) -> Direction:
         x_diff = int(x_dest - self.x)
         y_diff =  int(y_dest - self.y)
-        return self.direction_map[self.orientation][(x_diff, y_diff)]
+        return self.direction_map[self.orientation][coords_to_direction[(x_diff, y_diff)]]
     
     def update_location(self, to_steer: tuple) -> None:
         self.x += to_steer[0]
