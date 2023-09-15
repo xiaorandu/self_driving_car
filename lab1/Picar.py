@@ -18,6 +18,13 @@ min_angle = -ANGLE_RANGE/2
 scan_list = []
 angle_to_dist = {}
 
+class Direction(Enum):
+    NORTH = 1
+    EAST = 2
+    SOUTH = 3
+    WEST = 4
+
+
 
 class Picar:
     def __init__(self):
@@ -32,7 +39,15 @@ class Picar:
         self.obstacle_map = ObstacleMap()
         self.x = int(self.obstacle_map.size / 2)
         self.y = 0
+        self.orientation = Direction.NORTH
         self.angle_to_dist = {}
+
+        self.direction_map = {
+            Direction.NORTH: {(0, 1): Direction.EAST, (1, 0): Direction.SOUTH, (0, -1): Direction.WEST, (-1, 0): Direction.NORTH},
+            Direction.EAST:  {(0, 1): Direction.SOUTH, (1, 0): Direction.WEST, (0, -1): Direction.NORTH, (-1, 0): Direction.EAST},
+            Direction.SOUTH: {(0, 1): Direction.WEST, (1, 0): Direction.NORTH, (0, -1): Direction.EAST, (-1, 0): Direction.SOUTH},
+            Direction.WEST:  {(0, 1): Direction.NORTH, (1, 0): Direction.EAST, (0, -1): Direction.SOUTH, (-1, 0): Direction.WEST},
+        }
 
 
     # TODO: make these functions so they go for proper distance 
@@ -53,6 +68,9 @@ class Picar:
     def stop(self) -> None:
         fc.stop()
 
+    def change_orientation(self, to_steer: Direction) -> None:
+        self.orientation = self.direction_map[self.orientation][to_steer]
+
     def scan_env_and_map(self) -> None:
         self.angle_to_dist = {}
         cur_angle = min_angle
@@ -70,9 +88,11 @@ class Picar:
         return path
     
     def get_direction(self, x_dest, y_dest) -> tuple:
-        to_steer = (int(x_dest - self.x), int(y_dest - self.y))
-        return to_steer
+        x_diff = int(x_dest - self.x)
+        y_diff =  int(y_dest - self.y)
+        return (x_diff, y_diff)
     
     def update_location(self, to_steer: tuple) -> None:
         self.x += to_steer[0]
         self.y += to_steer[1]
+        self.change_orientation(to_steer)

@@ -2,7 +2,7 @@ import picar_4wd as fc
 import time
 from picar_4wd import servo
 from obstacle_map import ObstacleMap
-from Picar import Picar
+from Picar import Picar, Direction
 
 FORWARD_SPEED = 10
 BACKWARD_SPEED = 10
@@ -107,6 +107,7 @@ def avoid_obstacles():
     car = Picar()
     car.scan_env_and_map()
     path = car.find_path(end_row=50, end_col=99)
+    print(f"Moves to perform: {len(path)}")
 
     for tup in path:
         print(f"To move: {tup}")
@@ -126,9 +127,8 @@ def avoid_obstacles():
             time.sleep(1)
             car.forward()
         
-        time.sleep(.1)
-
         car.update_location(to_steer)
+        time.sleep(.1)
         
         
 
