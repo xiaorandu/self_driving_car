@@ -96,9 +96,9 @@ class Picar:
     def get_direction(self, x_dest, y_dest) -> Direction:
         x_diff = int(x_dest - self.x)
         y_diff =  int(y_dest - self.y)
-        return self.direction_map[self.orientation][coords_to_direction[(x_diff, y_diff)]]
+        return coords_to_direction[x_diff, y_diff]
     
-    def update_location(self, to_steer: tuple) -> None:
+    def update_location(self, to_steer: Direction) -> None:
         self.x += to_steer[0]
         self.y += to_steer[1]
         self.change_orientation(to_steer)
