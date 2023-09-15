@@ -139,7 +139,7 @@ def avoid_obstacles():
                 car.move_back_right()
 
         car.update_location(x, y)
-                
+        time.sleep(.25)                
         
         
 
