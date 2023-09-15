@@ -25,7 +25,7 @@ class ObstacleMap:
             print(f"Resetting obstacle map\n{self.obstacle_map}")
         self.obstacle_map = np.zeros((self.size, self.size), dtype=int)
 
-    def get_map(self) -> np.typing.NDArray:
+    def get_map(self):
         return self.obstacle_map
 
 
