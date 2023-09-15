@@ -114,8 +114,7 @@ class Picar:
     def get_direction(self, x_dest, y_dest) -> tuple[Direction, tuple[int, int]]:
         x_diff = int(x_dest - self.x)
         y_diff =  int(y_dest - self.y)
-
-        return (coords_to_direction[x_diff, y_diff], (x_diff, y_diff))
+        return (direction_map[self.orientation][(x_diff, y_diff)], (x_diff, y_diff))
     
     def update_location(self, cur_direction: Direction, to_steer: tuple) -> None:
         self.x += to_steer[0]
