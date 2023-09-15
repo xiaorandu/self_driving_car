@@ -138,6 +138,7 @@ def avoid_obstacles():
             else: #to the back right
                 car.move_back_right()
 
+        # TODO: update car orientation 
         car.update_location(x, y)
         time.sleep(.25)                
         

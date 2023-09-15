@@ -21,6 +21,13 @@ scan_list = []
 angle_to_dist = {}
 
 
+class Direction(Enum):
+    NORTH = 1
+    EAST = 2
+    SOUTH = 3
+    WEST = 4
+
+
 class Picar:
     def __init__(self):
         servo.offset = SERVO_OFFSET
@@ -34,6 +41,8 @@ class Picar:
         self.obstacle_map = ObstacleMap()
         self.x_location = int(self.obstacle_map.size / 2)
         self.y_location = 0
+        self.orientation = Direction.NORTH
+
         self.angle_to_dist = {}
 
 
@@ -103,8 +112,10 @@ class Picar:
     
     def get_direction(self, x_dest, y_dest) -> tuple:
         to_steer = (x_dest - self.x_location, y_dest - self.y_location)
+        # TODO: take self.orientation into account
         return to_steer
     
     def update_location(self, new_x: int, new_y: int) -> None:
         self.x_location += new_x
         self.y_location += new_y
+        
