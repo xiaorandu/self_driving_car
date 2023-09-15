@@ -7,6 +7,7 @@ import time
 
 FORWARD_SPEED = 10
 BACKWARD_SPEED = 10
+TURNING_SPEED = 50
 DIST_TO_OBSTACLE = 35
 SERVO_OFFSET = 45 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero.
 
@@ -28,15 +29,12 @@ class Picar:
 
         self.forward_speed = FORWARD_SPEED
         self.backward_speed = BACKWARD_SPEED
-
+        self.turning_speed = TURNING_SPEED
 
         self.obstacle_map = ObstacleMap()
         self.location = (self.obstacle_map.size / 2, 0) # (x, y)
         self.angle_to_dist = {}
 
-
-    # TODO: make these functions so they go for proper distance 
-    # ie --> turn right turns 90 degrees
 
     def forward(self) -> None:
         fc.forward(self.forward_speed)
@@ -53,21 +51,21 @@ class Picar:
     def stop(self) -> None:
         fc.stop()
 
-    #TODO
-    # def turn_around(self):
-    
-    # def half_turn_clockwise(self):
-        
-    # def half_turn_counterclockwise(self):
+    def turn_around(self):
+        fc.turn_right(self.turning_speed)
+        time.sleep(2.5)
+        self.forward()
         
     def move_right(self):
-        self.half_turn_clockwise()
+        fc.turn_right(self.turning_speed)
+        time.sleep(1)
         self.forward()
         
     def move_left(self):
-        self.half_turn_counterclockwise()
+        fc.turn_left(self.turning_speed)
+        time.sleep(1)
         self.forward()
-        
+     
     def move_front_right(self):
         self.turn_right()
         time.sleep(1)
