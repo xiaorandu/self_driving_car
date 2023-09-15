@@ -48,8 +48,9 @@ class Picar:
         self.orientation = Direction.NORTH
         self.angle_to_dist = {}
 
+        # FIXME: this is broken
         self.direction_map = {
-            Direction.NORTH: {(0, 1): Direction.EAST, (1, 0): Direction.SOUTH, (0, -1): Direction.WEST},
+            Direction.NORTH: {(0, 1): Direction.NORTH, (1, 0): Direction.EAST, (0, -1): Direction.SOUTH, (-1, 0): Direction.WEST},
             Direction.EAST:  {(0, 1): Direction.SOUTH, (1, 0): Direction.WEST, (0, -1): Direction.NORTH},
             Direction.SOUTH: {(0, 1): Direction.WEST, (1, 0): Direction.NORTH, (0, -1): Direction.EAST},
             Direction.WEST:  {(0, 1): Direction.NORTH, (1, 0): Direction.EAST, (0, -1): Direction.SOUTH},
