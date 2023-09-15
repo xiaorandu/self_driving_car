@@ -69,6 +69,8 @@ class Picar:
         fc.stop()
 
     def change_orientation(self, to_steer: Direction) -> None:
+        if to_steer == (0,0):
+            return
         self.orientation = self.direction_map[self.orientation][to_steer]
 
     def scan_env_and_map(self) -> None:
