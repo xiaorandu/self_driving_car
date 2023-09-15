@@ -3,6 +3,7 @@ from enum import Enum
 from picar_4wd import servo
 from obstacle_map import ObstacleMap
 from astar import astar
+import time
 
 FORWARD_SPEED = 10
 BACKWARD_SPEED = 10
@@ -52,6 +53,31 @@ class Picar:
     def stop(self) -> None:
         fc.stop()
 
+    #TODO
+    # def move_right(self):
+    
+    # def move_left(self):
+    
+    # def turn_around(self):
+        
+    def move_front_right(self):
+        self.turn_right()
+        time.sleep(1)
+        self.forward()
+    
+    def move_front_left(self):
+        self.turn_left()
+        time.sleep(1)
+        self.forward()
+    
+    def move_back_right(self):
+        self.turn_around()
+        self.move_front_left()
+        
+    def move_back_left(self):
+        self.turn_around()
+        self.move_front_right()
+    
     def scan_env_and_map(self) -> None:
         self.angle_to_dist = {}
         cur_angle = min_angle
