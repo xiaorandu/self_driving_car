@@ -43,10 +43,10 @@ class Picar:
         self.angle_to_dist = {}
 
         self.direction_map = {
-            Direction.NORTH: {(0, 1): Direction.EAST, (1, 0): Direction.SOUTH, (0, -1): Direction.WEST, (-1, 0): Direction.NORTH},
-            Direction.EAST:  {(0, 1): Direction.SOUTH, (1, 0): Direction.WEST, (0, -1): Direction.NORTH, (-1, 0): Direction.EAST},
-            Direction.SOUTH: {(0, 1): Direction.WEST, (1, 0): Direction.NORTH, (0, -1): Direction.EAST, (-1, 0): Direction.SOUTH},
-            Direction.WEST:  {(0, 1): Direction.NORTH, (1, 0): Direction.EAST, (0, -1): Direction.SOUTH, (-1, 0): Direction.WEST},
+            Direction.NORTH: {(0, 1): Direction.EAST, (1, 0): Direction.SOUTH, (0, -1): Direction.WEST},
+            Direction.EAST:  {(0, 1): Direction.SOUTH, (1, 0): Direction.WEST, (0, -1): Direction.NORTH},
+            Direction.SOUTH: {(0, 1): Direction.WEST, (1, 0): Direction.NORTH, (0, -1): Direction.EAST},
+            Direction.WEST:  {(0, 1): Direction.NORTH, (1, 0): Direction.EAST, (0, -1): Direction.SOUTH},
         }
 
 
@@ -89,10 +89,10 @@ class Picar:
 
         return path
     
-    def get_direction(self, x_dest, y_dest) -> tuple:
+    def get_direction(self, x_dest, y_dest) -> Direction:
         x_diff = int(x_dest - self.x)
         y_diff =  int(y_dest - self.y)
-        return (x_diff, y_diff)
+        return self.direction_map[self.orientation][(x_diff, y_diff)]
     
     def update_location(self, to_steer: tuple) -> None:
         self.x += to_steer[0]

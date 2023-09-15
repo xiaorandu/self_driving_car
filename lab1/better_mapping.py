@@ -114,18 +114,14 @@ def avoid_obstacles():
         to_steer = car.get_direction(tup[0], tup[1])
         
         # FIXME: none of these have been checked
-        if to_steer == (0, 1):
+        if to_steer == Direction.NORTH:
             car.forward()
-        elif to_steer == (1, 0):
+        elif to_steer == Direction.EAST:
             car.turn_right()
             time.sleep(1)
             car.forward()
-        elif to_steer == (0, -1):
+        elif to_steer == Direction.SOUTH:
             car.backward()
-        elif to_steer == (-1, 0):
-            car.turn_left()
-            time.sleep(1)
-            car.forward()
         
         car.update_location(to_steer)
         time.sleep(.1)
