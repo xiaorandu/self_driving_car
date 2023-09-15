@@ -26,14 +26,42 @@ class Direction(Enum):
 
 
 coords_to_direction ={
-    (0, 0): Direction.NORTH,
+    (1, 0): Direction.NORTH,
     (0, 1): Direction.EAST,
     (-1, 0): Direction.SOUTH,
     (0, -1): Direction.WEST,
 }
 
+direction_map = {
+    Direction.NORTH: {
+        (0,1): Direction.NORTH, 
+        (1,0): Direction.EAST, 
+        (0,-1): Direction.SOUTH, 
+        (-1, 0): Direction.WEST
+    },
+    Direction.EAST: {
+        (0,1): Direction.WEST, 
+        (1,0): Direction.NORTH, 
+        (0,-1): Direction.EAST, 
+        (-1,0): Direction.SOUTH
+    },
+    Direction.SOUTH: {
+        (0,1): Direction.SOUTH, 
+        (1,0): Direction.WEST, 
+        (0,-1): Direction.NORTH, 
+        (-1,0): Direction.EAST
+    },
+    Direction.WEST: {
+        (0,1): Direction.EAST, 
+        (1,0): Direction.SOUTH, 
+        (0,-1): Direction.WEST, 
+        (-1,0): Direction.NORTH
+    }
+}
+
 class Picar:
     def __init__(self):
+
         servo.offset = SERVO_OFFSET
         servo.set_angle(0)
         self.servo_step = STEP
@@ -47,14 +75,6 @@ class Picar:
         self.y = 0
         self.orientation = Direction.NORTH
         self.angle_to_dist = {}
-
-        # FIXME: this is broken
-        self.direction_map = {
-            Direction.NORTH: {(0, 1): Direction.NORTH, (1, 0): Direction.EAST, (0, -1): Direction.SOUTH, (-1, 0): Direction.WEST},
-            Direction.EAST:  {(0, 1): Direction.SOUTH, (1, 0): Direction.WEST, (0, -1): Direction.NORTH},
-            Direction.SOUTH: {(0, 1): Direction.WEST, (1, 0): Direction.NORTH, (0, -1): Direction.EAST},
-            Direction.WEST:  {(0, 1): Direction.NORTH, (1, 0): Direction.EAST, (0, -1): Direction.SOUTH},
-        }
 
 
     # TODO: make these functions so they go for proper distance 
@@ -74,9 +94,6 @@ class Picar:
 
     def stop(self) -> None:
         fc.stop()
-
-    def change_orientation(self, dir_to_steer: Direction) -> None:
-        self.orientation = self.direction_map[self.orientation][dir_to_steer]
 
     def scan_env_and_map(self) -> None:
         self.angle_to_dist = {}
@@ -99,7 +116,7 @@ class Picar:
         y_diff =  int(y_dest - self.y)
         return (coords_to_direction[x_diff, y_diff], (x_diff, y_diff))
     
-    def update_location(self, to_steer: Direction) -> None:
+    def update_location(self, cur_direction: Direction, to_steer: tuple) -> None:
         self.x += to_steer[0]
         self.y += to_steer[1]
-        self.change_orientation(to_steer)
+        self.orientation = cur_direction

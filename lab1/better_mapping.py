@@ -121,12 +121,20 @@ def avoid_obstacles():
             car.turn_right()
             time.sleep(1)
             car.forward()
+        elif dir_to_steer == Direction.SOUTH:
+            car.turn_right()
+            time.sleep(2) # FIXME
+            car.forward()
         elif dir_to_steer == Direction.WEST:
             car.turn_left()
             time.sleep(1)
             car.forward()
         
-        car.update_location(steer_coords)
+        car.update_location(
+            cur_direction=dir_to_steer,
+            to_steer=steer_coords
+        )
+
         time.sleep(.1)
         
         
