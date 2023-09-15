@@ -32,7 +32,8 @@ class Picar:
         self.turning_speed = TURNING_SPEED
 
         self.obstacle_map = ObstacleMap()
-        self.location = (int(self.obstacle_map.size / 2), 0) # (x, y)
+        self.x_location = int(self.obstacle_map.size / 2)
+        self.y_location = 0
         self.angle_to_dist = {}
 
 
@@ -95,11 +96,15 @@ class Picar:
     
     def find_path(self) -> list[tuple]:
         # TODO: find end destination
-        path = astar(self.location[0], self.location[1], 100 - 1, 50, self.obstacle_map.get_map())
+        path = astar(self.x_location, self.y_location, 100 - 1, 50, self.obstacle_map.get_map())
         print(f"Astar path:\t{path}")
 
         return path
     
     def get_direction(self, x_dest, y_dest) -> tuple:
-        to_steer = (x_dest - self.location[0], y_dest - self.location[1])
+        to_steer = (x_dest - self.x_location, y_dest - self.y_location)
         return to_steer
+    
+    def update_location(self, new_x: int, new_y: int) -> None:
+        self.x_location += new_x
+        self.y_location += new_y

@@ -137,6 +137,8 @@ def avoid_obstacles():
                 car.move_front_left()
             else: #to the back right
                 car.move_back_right()
+
+        car.update_location(x, y)
                 
         
         
