@@ -31,11 +31,10 @@ class ObstacleMap:
         new_points = []
         for angle, distance in angle_to_dist.items():
             if distance >= 0:
-                # x = int(distance * np.sin(np.radians(angle)))
-                # y = int(distance * np.cos(np.radians(angle)))
-                # FIXME: should this be done with radians???
-                x = int((self.size / 2) + int(distance * np.sin(angle)))
-                y = int(distance * np.cos(angle))
+                #convert angles from degrees to radians
+                rad = np.radians(angle)
+                x = int((self.size / 2) - int(distance * np.sin(rad)))
+                y = int(distance * np.cos(rad))
                 
                 # Ensure the coordinates are within the bounds of the array
                 if 0 <= x < self.size and 0 <= y < self.size:
