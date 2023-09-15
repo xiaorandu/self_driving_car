@@ -26,10 +26,10 @@ class Direction(Enum):
 
 
 coords_to_direction ={
-    (1, 0): Direction.NORTH,
-    (0, 1): Direction.EAST,
-    (-1, 0): Direction.SOUTH,
-    (0, -1): Direction.WEST,
+    (0, 1): Direction.NORTH,
+    (1, 0): Direction.EAST,
+    (0, -1): Direction.SOUTH,
+    (-1, 0): Direction.WEST,
 }
 
 direction_map = {
@@ -114,6 +114,7 @@ class Picar:
     def get_direction(self, x_dest, y_dest) -> tuple[Direction, tuple[int, int]]:
         x_diff = int(x_dest - self.x)
         y_diff =  int(y_dest - self.y)
+
         return (coords_to_direction[x_diff, y_diff], (x_diff, y_diff))
     
     def update_location(self, cur_direction: Direction, to_steer: tuple) -> None:
