@@ -112,6 +112,7 @@ def avoid_obstacles():
     for tup in path[1:]:
         print(f"To move: {tup}")
         dir_to_steer, steer_coords = car.get_direction(tup[0], tup[1])
+        print(f"direction: {dir_to_steer}\nsteer_cords: {steer_coords}")
         
         # FIXME: none of these have been checked
         if dir_to_steer == Direction.NORTH:
