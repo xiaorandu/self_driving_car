@@ -109,21 +109,48 @@ def avoid_obstacles():
     path = car.find_path()
 
     for tup in path:
-        to_steer = car.get_direction(tup[0], tup[1])
+        x, y = car.get_direction(tup[0], tup[1])
         
-        # FIXME: none of these have been checked
-        if to_steer == (0, 1):
-            car.forward()
-        elif to_steer == (1, 0):
-            car.turn_right()
-            time.sleep(1)
-            car.forward()
-        elif to_steer == (0, -1):
-            car.backward()
-        elif to_steer == (-1, 0):
-            car.turn_left()
-            time.sleep(1)
-            car.forward()
+        if x == 0:
+            if y > 0: #move forward
+                car.forward()
+            elif y == 0:
+                fc.stop()
+            else: #move backward
+                car.backward()
+        
+        elif y == 0:
+            if x > 0: #to the right
+                car.move_right()
+            else: #to the left
+                car.move_left()
+                
+        elif y / x > 0:
+            if y > 0: #to the front right
+                car.move_front_right()
+            else: #to the back left
+                car.move_back_left()
+                
+        elif y / x < 0:
+            if y > 0: #to the front left
+                car.move_front_left()
+            else: #to the back right
+                car.move_back_right()
+                
+        
+        # # FIXME: none of these have been checked
+        # if to_steer == (0, 1):
+        #     car.forward()
+        # elif to_steer == (1, 0):
+        #     car.turn_right()
+        #     time.sleep(1)
+        #     car.forward()
+        # elif to_steer == (0, -1):
+        #     car.backward()
+        # elif to_steer == (-1, 0):
+        #     car.turn_left()
+        #     time.sleep(1)
+        #     car.forward()
         
 
 
