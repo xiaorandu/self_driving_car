@@ -108,7 +108,7 @@ def avoid_obstacles():
     car.scan_env_and_map()
     path = car.find_path()
 
-    for tup in path:
+    for tup in path[1:]:
         x, y = car.get_direction(tup[0], tup[1])
         
         if x == 0:
