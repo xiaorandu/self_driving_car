@@ -54,11 +54,19 @@ class Picar:
         fc.stop()
 
     #TODO
-    # def move_right(self):
-    
-    # def move_left(self):
-    
     # def turn_around(self):
+    
+    # def half_turn_clockwise(self):
+        
+    # def half_turn_counterclockwise(self):
+        
+    def move_right(self):
+        self.half_turn_clockwise()
+        self.forward()
+        
+    def move_left(self):
+        self.half_turn_counterclockwise()
+        self.forward()
         
     def move_front_right(self):
         self.turn_right()
