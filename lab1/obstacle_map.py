@@ -1,6 +1,7 @@
 import numpy as np
 import sys
 
+CLEARANCE = 2
 class ObstacleMap:
     """
     Mantains a map of the environment by populating a 2d array while moving forward
@@ -9,6 +10,7 @@ class ObstacleMap:
         self.size = size
         self.debug = debug
         self.obstacle_map = np.zeros((size, size), dtype=int)
+        self.clearance = CLEARANCE
 
         if self.debug:
             import sys
@@ -29,6 +31,7 @@ class ObstacleMap:
 
     def do_map(self, angle_to_dist: dict) -> None:
         new_points = []
+        obstacles = []
         for angle, distance in angle_to_dist.items():
             if distance >= 0:
                 #convert angles from degrees to radians
@@ -56,3 +59,21 @@ class ObstacleMap:
 
             for x, y in zip(x_line, y_line):
                 self.obstacle_map[int(x)][int(y)] = 1
+                obstacles.append((int(x), int(y)))
+                
+        self.add_clearance(self.clearance, obstacles, self.obstacle_map)
+    
+    #add clearance to the obstacles
+    def add_clearance(self, clearance, obstacles, obstacle_map):
+        clearance_list = []
+        for i in range(-clearance, clearance + 1):
+            for j in range(-clearance, clearance + 1):
+                clearance_list.append((i, j))
+        
+        for obstacle in obstacles:
+            for c in clearance_list:
+                x, y = obstacle[0] + c[0], obstacle[1] + c[1]
+                if 0 <= x < self.size and 0 <= y < self.size:
+                    obstacle_map[x][y] = 1
+        
+        return obstacle_map
