@@ -110,6 +110,7 @@ def avoid_obstacles():
 
     for tup in path[1:]:
         x, y = car.get_direction(tup[0], tup[1])
+        print(f"Moving to: {tup}\nDirections: ({x}, {y})")
         
         if x == 0:
             if y > 0: #move forward
@@ -136,21 +137,11 @@ def avoid_obstacles():
                 car.move_front_left()
             else: #to the back right
                 car.move_back_right()
-                
+
+        # TODO: update car orientation 
+        car.update_location(x, y)
+        time.sleep(.25)                
         
-        # # FIXME: none of these have been checked
-        # if to_steer == (0, 1):
-        #     car.forward()
-        # elif to_steer == (1, 0):
-        #     car.turn_right()
-        #     time.sleep(1)
-        #     car.forward()
-        # elif to_steer == (0, -1):
-        #     car.backward()
-        # elif to_steer == (-1, 0):
-        #     car.turn_left()
-        #     time.sleep(1)
-        #     car.forward()
         
 
 
