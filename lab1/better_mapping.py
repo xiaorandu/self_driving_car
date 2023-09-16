@@ -110,7 +110,7 @@ def avoid_obstacles():
 
     for tup in path[1:]:
         print(f"Moving to {tup}")
-        x, y = car.get_direction(tup[0], tup[1])
+        (x, y), (pre_x, pre_y) = car.get_direction(tup[0], tup[1])
         print(f"Directions got: ({x}, {y})")
         
         if x == 0:
@@ -139,8 +139,8 @@ def avoid_obstacles():
             else: #to the back right
                 car.move_back_right()
 
-        car.update_location(x, y)
-        car.update_orientation(x, y)
+        car.update_location(pre_x, pre_y)
+        car.update_orientation(pre_x, pre_y)
         time.sleep(.25)                
         
         

@@ -164,14 +164,14 @@ class Picar:
 
         return path
     
-    def get_direction(self, x_dest, y_dest) -> tuple:
+    def get_direction(self, x_dest, y_dest) -> tuple[tuple, tuple]:
         to_steer = (x_dest - self.x_location, y_dest - self.y_location)
         print(f"Cur location { self.x_location} {self.y_location}")
-        print(f"to steer: {to_steer}    x dest: {x_dest} y dest: {y_dest}")
+        print(f"to steer: {to_steer}")
 
         # convert coords
         new_coords = normalize_direction[self.orientation][to_steer] if self.orientation != Direction.NORTH else to_steer
-        return new_coords
+        return new_coords, to_steer
     
     def update_location(self, new_x: int, new_y: int) -> None:
         self.x_location += new_x
