@@ -6,10 +6,11 @@ from astar import astar
 import time
 
 FORWARD_SPEED = 10
-FORWARD_WAIT = .07 # configure to make sure it only goes forward 1 cm.
+FORWARD_WAIT = .05 # configure to make sure it only goes forward 1 cm.
 BACKWARD_SPEED = 10
 TURNING_SPEED = 70
 DIST_TO_OBSTACLE = 35
+DISTANCE_OFFSET = -5.36 # offset to make sure objects are detected at accurate distance as measured from front of vehicle. They were being measured as being too far away.
 SERVO_OFFSET = 9 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero. 9 works for BR. Was 45.
 
 ANGLE_RANGE = 144
@@ -40,6 +41,7 @@ class Picar:
 
         self.forward_speed = FORWARD_SPEED
         self.forward_wait = FORWARD_WAIT
+        self.distance_offset = DISTANCE_OFFSET
         self.backward_speed = BACKWARD_SPEED
         self.turning_speed = TURNING_SPEED
 
@@ -109,14 +111,14 @@ class Picar:
         self.angle_to_dist = {}
         cur_angle = min_angle
         while cur_angle <= max_angle:
-            self.angle_to_dist[cur_angle] = fc.get_distance_at(cur_angle)
+            self.angle_to_dist[cur_angle] = fc.get_distance_at(cur_angle) + self.distance_offset
             cur_angle += self.servo_step
 
         self.obstacle_map.do_map(self.angle_to_dist)
     
     def find_path(self) -> list[tuple]:
         # TODO: find end destination
-        path = astar(self.x_location, self.y_location, 55, 5, self.obstacle_map.get_map())
+        path = astar(self.x_location, self.y_location, 99, 50, self.obstacle_map.get_map())
         print(f"Astar path:\t{path}")
 
         return path

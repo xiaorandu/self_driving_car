@@ -60,10 +60,14 @@ class ObstacleMap:
             for x, y in zip(x_line, y_line):
                 self.obstacle_map[int(x)][int(y)] = 1
                 obstacles.append((int(x), int(y)))
-                
+
+        #TODO: remove duplicates from obstacles array.    
         self.add_clearance(self.clearance, obstacles, self.obstacle_map)
     
     #add clearance to the obstacles
+
+    # extend every obstacle coord by CLEARANCE in x and y.
+    # if obstacle detected at angle 0.0 with distance 20 (x==50) this will add obstacle entries to the grid from x==48-52 y==18-22 if CLEARANCE is set to 2.
     def add_clearance(self, clearance, obstacles, obstacle_map):
         clearance_list = []
         for i in range(-clearance, clearance + 1):
