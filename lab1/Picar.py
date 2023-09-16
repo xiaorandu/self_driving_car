@@ -8,7 +8,7 @@ import time
 FORWARD_SPEED = 10
 FORWARD_WAIT = .05 # configure to make sure it only goes forward 1 cm.
 BACKWARD_SPEED = 10
-TURNING_SPEED = 70
+TURNING_SPEED = 20
 DIST_TO_OBSTACLE = 35
 DISTANCE_OFFSET = -5.36 # offset to make sure objects are detected at accurate distance as measured from front of vehicle. They were being measured as being too far away.
 SERVO_OFFSET = 9 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero. 9 works for BR. Was 45.
@@ -70,7 +70,7 @@ normalize_direction = {
 
 
 class Picar:
-    def __init__(self):
+    def __init__(self, map_size: int = 100):
         servo.offset = SERVO_OFFSET
         servo.set_angle(0)
         self.servo_step = STEP
@@ -81,7 +81,7 @@ class Picar:
         self.backward_speed = BACKWARD_SPEED
         self.turning_speed = TURNING_SPEED
 
-        self.obstacle_map = ObstacleMap()
+        self.obstacle_map = ObstacleMap(size=map_size)
         self.x_location = int(self.obstacle_map.size / 2)
         self.y_location = 0
         self.orientation = Direction.NORTH
@@ -98,46 +98,48 @@ class Picar:
         fc.backward(self.backward_speed)
 
     def turn_right(self) -> None:
-        fc.turn_right(self.forward_speed)
+        fc.turn_right(self.turning_speed)
 
     def turn_left(self) -> None:
-        fc.turn_left(self.forward_speed)
+        fc.turn_left(self.turning_speed)
 
     def stop(self) -> None:
         fc.stop()
 
     def turn_around(self):
         fc.turn_right(self.turning_speed)
-        time.sleep(2.5)
+        time.sleep(2.3)
         self.forward()
 
     def move_right(self):
-        fc.turn_right(self.turning_speed)
-        time.sleep(1)
+        fc.turn_right()
+        time.sleep(1.15)
         self.forward()
+        time.sleep(self.forward_wait)
         
     def move_left(self):
-        fc.turn_left(self.turning_speed)
-        time.sleep(1)
+        fc.turn_left()
+        time.sleep(1.15)
         self.forward()
+        time.sleep(self.forward_wait)
      
-    def move_front_right(self):
-        self.turn_right()
-        time.sleep(1)
-        self.forward()
+    # def move_front_right(self):
+    #     self.turn_right()
+    #     time.sleep(1)
+    #     self.forward()
     
-    def move_front_left(self):
-        self.turn_left()
-        time.sleep(1)
-        self.forward()
+    # def move_front_left(self):
+    #     self.turn_left()
+    #     time.sleep(1)
+    #     self.forward()
     
-    def move_back_right(self):
-        self.turn_around()
-        self.move_front_left()
+    # def move_back_right(self):
+    #     self.turn_around()
+    #     self.move_front_left()
         
-    def move_back_left(self):
-        self.turn_around()
-        self.move_front_right()
+    # def move_back_left(self):
+    #     self.turn_around()
+    #     self.move_front_right()
     
     def scan_env_and_map(self) -> None:
         self.angle_to_dist = {}
