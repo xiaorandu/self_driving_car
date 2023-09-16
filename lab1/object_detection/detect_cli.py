@@ -41,8 +41,8 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
   start_time = time.time()
   fps_avg_frame_count = 10
 
-  # Start capturing video input from the camera
-  cap = cv2.VideoCapture(camera_id)
+  # Start capturing video input from the camera cv2.CAP_GSTREAMER
+  cap = cv2.VideoCapture(camera_id, cv2.CAP_V4L2, (cv2.CAP_PROP_HW_ACCELERATION, cv2.VIDEO_ACCELERATION_ANY))
   #print(cv2.getBuildInformation())
   cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
   cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
