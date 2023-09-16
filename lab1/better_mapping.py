@@ -122,7 +122,7 @@ def avoid_obstacles():
         
         elif y == 0:
             if x > 0: # move east
-                car.move_east()
+                car.move_right()
             else: # move west
                 car.move_left()
                 
@@ -138,8 +138,8 @@ def avoid_obstacles():
             else: #to the back right
                 car.move_back_right()
 
-        # TODO: update car orientation 
         car.update_location(x, y)
+        car.update_orientation(x, y)
         time.sleep(.25)                
         
         

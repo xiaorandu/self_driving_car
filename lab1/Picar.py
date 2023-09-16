@@ -27,11 +27,37 @@ angle_to_dist = {}
 
 
 class Direction(Enum):
-    NORTH = 1
-    EAST = 2
-    SOUTH = 3
-    WEST = 4
+    NORTH = 0
+    EAST = 1
+    SOUTH = 2
+    WEST = 3
 
+
+coords_to_direction = {
+    (0,1): Direction.NORTH,
+    (1,0): Direction.EAST,
+    (0,-1): Direction.SOUTH,
+    (-1,0): Direction.WEST,
+}
+
+direction_to_coords = {
+    Direction.NORTH: (0,1),
+    Direction.EAST: (1,0),
+    Direction.SOUTH: (0,-1),
+    Direction.WEST: (-1,0),
+}
+
+
+def normalize_direction(cur_orientation: Direction, dir_in: Direction) -> tuple:
+    orientation_diff = cur_orientation.value - dir_in.value
+
+    # Create a list of transformation tuples (rotate 90 degrees each step)
+    transformations = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    # Get the new index based on the current orientation
+    new_index = (transformations.index(direction_to_coords[dir_in]) - orientation_diff) % 4
+    
+    return transformations[new_index]
 
 class Picar:
     def __init__(self):
@@ -75,14 +101,19 @@ class Picar:
         time.sleep(2.5)
         self.forward()
         
-    def move_east(self):
-        if self.orientation == Direction.NORTH:
-            fc.turn_right(self.turning_speed)
-            time.sleep(1)
-            self.orientation = Direction.EAST
+    # def move_east(self):
+    #     if self.orientation == Direction.NORTH:
+    #         fc.turn_right(self.turning_speed)
+    #         time.sleep(1)
+    #         self.orientation = Direction.EAST
+    #     self.forward()
+    #     time.sleep(self.forward_wait)
+    #     fc.stop()
+
+    def move_right(self):
+        fc.turn_right(self.turning_speed)
+        time.sleep(1)
         self.forward()
-        time.sleep(self.forward_wait)
-        fc.stop()
         
     def move_left(self):
         fc.turn_left(self.turning_speed)
@@ -125,10 +156,21 @@ class Picar:
     
     def get_direction(self, x_dest, y_dest) -> tuple:
         to_steer = (x_dest - self.x_location, y_dest - self.y_location)
-        # TODO: take self.orientation into account
-        return to_steer
+        print(f"Cur location { self.x_location} {self.y_location}")
+        print(f"to steer: {to_steer}    x dest: {x_dest} y dest: {y_dest}")
+
+        # convert coords
+        new_coords = normalize_direction(
+            cur_orientation=self.orientation,
+            dir_in=coords_to_direction[to_steer],
+        ) if self.orientation != coords_to_direction[to_steer] else to_steer
+        return new_coords
     
     def update_location(self, new_x: int, new_y: int) -> None:
         self.x_location += new_x
         self.y_location += new_y
+
+    def update_orientation(self, x: int, y: int) -> None:
+        self.orientation = coords_to_direction[x, y]
+
         
