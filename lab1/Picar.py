@@ -6,7 +6,7 @@ from astar import astar
 import time
 
 FORWARD_SPEED = 10
-FORWARD_WAIT = .07
+FORWARD_WAIT = .07 # configure to make sure it only goes forward 1 cm.
 BACKWARD_SPEED = 10
 TURNING_SPEED = 70
 DIST_TO_OBSTACLE = 35

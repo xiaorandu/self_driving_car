@@ -113,7 +113,7 @@ def avoid_obstacles():
         print(f"Moving to: {tup}\nDirections: ({x}, {y})")
         
         if x == 0:
-            if y > 0: #move north
+            if y > 0: #move north 1 cm
                 car.forward()
             elif y == 0:
                 fc.stop()
