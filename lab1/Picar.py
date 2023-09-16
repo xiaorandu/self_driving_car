@@ -47,25 +47,27 @@ direction_to_coords = {
     Direction.WEST: (-1,0),
 }
 
+normalize_direction = {
+    Direction.EAST: {
+        (0,1): (-1,0),
+        (1,0): (0,1),
+        (0,-1): (1,0),
+        (-1,0): (0,-1)
+    },
+    Direction.SOUTH: {
+        (0,1): (0,-1),
+        (1,0): (-1,0),
+        (0,-1): (0,1),
+        (-1,0): (1,0)
+    },
+    Direction.WEST: {
+        (0,1): (1,0),
+        (1,0): (0,-1),
+        (0,-1): (-1,0),
+        (-1,0): (0,1)
+    }
+}
 
-def normalize_direction(cur_orientation: Direction, dir_in: Direction) -> tuple:
-    # Create a list of transformation tuples (rotate 90 degrees each step)
-    transformations = [(0, 1), (1, 0), (0, -1), (-1, 0)]
-    
-    # Get the index in the transformations list for the current orientation and the desired direction
-    cur_orientation_index = transformations.index(direction_to_coords[cur_orientation])
-    dir_in_index = transformations.index(direction_to_coords[dir_in])
-
-    # Find the difference in indices to find how much we need to rotate
-    index_diff = dir_in_index - cur_orientation_index
-
-    # Adjust index_diff to find the shortest path to the new direction
-    index_diff = (index_diff + 2) % 4 - 2
-
-    # Get the new index based on the current orientation
-    new_index = (cur_orientation_index + index_diff) % 4
-    
-    return transformations[new_index]
 
 class Picar:
     def __init__(self):
@@ -168,10 +170,7 @@ class Picar:
         print(f"to steer: {to_steer}    x dest: {x_dest} y dest: {y_dest}")
 
         # convert coords
-        new_coords = normalize_direction(
-            cur_orientation=self.orientation,
-            dir_in=coords_to_direction[to_steer],
-        ) if self.orientation != coords_to_direction[to_steer] else to_steer
+        new_coords = normalize_direction[self.orientation][to_steer] if self.orientation != Direction.NORTH else to_steer
         return new_coords
     
     def update_location(self, new_x: int, new_y: int) -> None:
