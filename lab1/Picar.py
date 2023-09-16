@@ -8,7 +8,7 @@ import time
 FORWARD_SPEED = 10
 FORWARD_WAIT = .05 # configure to make sure it only goes forward 1 cm.
 BACKWARD_SPEED = 10
-TURNING_SPEED = 70
+TURNING_SPEED = 20
 DIST_TO_OBSTACLE = 35
 DISTANCE_OFFSET = -5.36 # offset to make sure objects are detected at accurate distance as measured from front of vehicle. They were being measured as being too far away.
 SERVO_OFFSET = 9 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero. 9 works for BR. Was 45.
@@ -27,14 +27,50 @@ angle_to_dist = {}
 
 
 class Direction(Enum):
-    NORTH = 1
-    EAST = 2
-    SOUTH = 3
-    WEST = 4
+    NORTH = 0
+    EAST = 1
+    SOUTH = 2
+    WEST = 3
+
+
+coords_to_direction = {
+    (0,1): Direction.NORTH,
+    (1,0): Direction.EAST,
+    (0,-1): Direction.SOUTH,
+    (-1,0): Direction.WEST,
+}
+
+direction_to_coords = {
+    Direction.NORTH: (0,1),
+    Direction.EAST: (1,0),
+    Direction.SOUTH: (0,-1),
+    Direction.WEST: (-1,0),
+}
+
+normalize_direction = {
+    Direction.EAST: {
+        (0,1): (-1,0),
+        (1,0): (0,1),
+        (0,-1): (1,0),
+        (-1,0): (0,-1)
+    },
+    Direction.SOUTH: {
+        (0,1): (0,-1),
+        (1,0): (-1,0),
+        (0,-1): (0,1),
+        (-1,0): (1,0)
+    },
+    Direction.WEST: {
+        (0,1): (1,0),
+        (1,0): (0,-1),
+        (0,-1): (-1,0),
+        (-1,0): (0,1)
+    }
+}
 
 
 class Picar:
-    def __init__(self):
+    def __init__(self, map_size: int = 100):
         servo.offset = SERVO_OFFSET
         servo.set_angle(0)
         self.servo_step = STEP
@@ -45,7 +81,7 @@ class Picar:
         self.backward_speed = BACKWARD_SPEED
         self.turning_speed = TURNING_SPEED
 
-        self.obstacle_map = ObstacleMap()
+        self.obstacle_map = ObstacleMap(size=map_size)
         self.x_location = int(self.obstacle_map.size / 2)
         self.y_location = 0
         self.orientation = Direction.NORTH
@@ -56,56 +92,48 @@ class Picar:
     def forward(self) -> None:
         fc.forward(self.forward_speed)
         time.sleep(self.forward_wait)
-        fc.stop()
+        # fc.stop()
     
     def backward(self) -> None:
         fc.backward(self.backward_speed)
-
-    def turn_right(self) -> None:
-        fc.turn_right(self.forward_speed)
-
-    def turn_left(self) -> None:
-        fc.turn_left(self.forward_speed)
 
     def stop(self) -> None:
         fc.stop()
 
     def turn_around(self):
         fc.turn_right(self.turning_speed)
-        time.sleep(2.5)
+        time.sleep(2.3)
         self.forward()
-        
-    def move_east(self):
-        if self.orientation == Direction.NORTH:
-            fc.turn_right(self.turning_speed)
-            time.sleep(1)
-            self.orientation = Direction.EAST
+
+    def move_right(self):
+        fc.turn_right(self.turning_speed)
+        time.sleep(1.15)
         self.forward()
         time.sleep(self.forward_wait)
-        fc.stop()
         
     def move_left(self):
         fc.turn_left(self.turning_speed)
-        time.sleep(1)
+        time.sleep(1.15)
         self.forward()
+        time.sleep(self.forward_wait)
      
-    def move_front_right(self):
-        self.turn_right()
-        time.sleep(1)
-        self.forward()
+    # def move_front_right(self):
+    #     self.turn_right()
+    #     time.sleep(1)
+    #     self.forward()
     
-    def move_front_left(self):
-        self.turn_left()
-        time.sleep(1)
-        self.forward()
+    # def move_front_left(self):
+    #     self.turn_left()
+    #     time.sleep(1)
+    #     self.forward()
     
-    def move_back_right(self):
-        self.turn_around()
-        self.move_front_left()
+    # def move_back_right(self):
+    #     self.turn_around()
+    #     self.move_front_left()
         
-    def move_back_left(self):
-        self.turn_around()
-        self.move_front_right()
+    # def move_back_left(self):
+    #     self.turn_around()
+    #     self.move_front_right()
     
     def scan_env_and_map(self) -> None:
         self.angle_to_dist = {}
@@ -123,12 +151,17 @@ class Picar:
 
         return path
     
-    def get_direction(self, x_dest, y_dest) -> tuple:
+    def get_direction(self, x_dest, y_dest) -> tuple[tuple, tuple]:
         to_steer = (x_dest - self.x_location, y_dest - self.y_location)
-        # TODO: take self.orientation into account
-        return to_steer
+        # convert coords
+        new_coords = normalize_direction[self.orientation][to_steer] if self.orientation != Direction.NORTH else to_steer
+        return new_coords, to_steer
     
     def update_location(self, new_x: int, new_y: int) -> None:
         self.x_location += new_x
         self.y_location += new_y
+
+    def update_orientation(self, x: int, y: int) -> None:
+        self.orientation = coords_to_direction[x, y]
+
         

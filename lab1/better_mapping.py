@@ -104,13 +104,14 @@ def naive_drive():
             fc.forward(FORWARD_SPEED)
 
 def avoid_obstacles():
-    car = Picar()
+    car = Picar(map_size=100)
     car.scan_env_and_map()
     path = car.find_path()
 
     for tup in path[1:]:
-        x, y = car.get_direction(tup[0], tup[1])
-        print(f"Moving to: {tup}\nDirections: ({x}, {y})")
+        print(f"Car at ({car.x_location}, {car.y_location})\nGoing to {tup}")
+        (x, y), (pre_x, pre_y) = car.get_direction(tup[0], tup[1]) # returns (transformed_coords) (pre_transform_coords)
+        print(f"Transformed directions: ({x}, {y})")
         
         if x == 0:
             if y > 0: #move north 1 cm
@@ -122,25 +123,25 @@ def avoid_obstacles():
         
         elif y == 0:
             if x > 0: # move east
-                car.move_east()
+                car.move_right()
             else: # move west
                 car.move_left()
-                
-        elif y / x > 0:
-            if y > 0: #to the front right
-                car.move_front_right()
-            else: #to the back left
-                car.move_back_left()
-                
-        elif y / x < 0:
-            if y > 0: #to the front left
-                car.move_front_left()
-            else: #to the back right
-                car.move_back_right()
 
-        # TODO: update car orientation 
-        car.update_location(x, y)
-        time.sleep(.25)                
+        # These should never execute. Car should only move North, East, South, or West   
+        # elif y / x > 0:
+        #     if y > 0: #to the front right
+        #         car.move_front_right()
+        #     else: #to the back left
+        #         car.move_back_left()
+                
+        # elif y / x < 0:
+        #     if y > 0: #to the front left
+        #         car.move_front_left()
+        #     else: #to the back right
+        #         car.move_back_right()
+
+        car.update_location(pre_x, pre_y)
+        car.update_orientation(pre_x, pre_y)
         
         
 
