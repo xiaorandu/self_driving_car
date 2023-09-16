@@ -49,13 +49,17 @@ direction_to_coords = {
 
 
 def normalize_direction(cur_orientation: Direction, dir_in: Direction) -> tuple:
-    orientation_diff = cur_orientation.value - dir_in.value
-
-    # Create a list of transformation tuples (rotate 90 degrees each step)
     transformations = [(0, 1), (1, 0), (0, -1), (-1, 0)]
     
+    # Get the index in the transformations list for the current orientation and the desired direction
+    cur_orientation_index = transformations.index(direction_to_coords[cur_orientation])
+    dir_in_index = transformations.index(direction_to_coords[dir_in])
+
+    # Find the difference in indices to find how much we need to rotate
+    index_diff = dir_in_index - cur_orientation_index
+
     # Get the new index based on the current orientation
-    new_index = (transformations.index(direction_to_coords[dir_in]) - orientation_diff) % 4
+    new_index = (cur_orientation_index + index_diff) % 4
     
     return transformations[new_index]
 
