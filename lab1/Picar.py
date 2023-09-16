@@ -9,7 +9,7 @@ FORWARD_SPEED = 10
 BACKWARD_SPEED = 10
 TURNING_SPEED = 50
 DIST_TO_OBSTACLE = 35
-SERVO_OFFSET = 45 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero.
+SERVO_OFFSET = 9 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero. 9 works for BR. Was 45.
 
 ANGLE_RANGE = 144
 STEP = 18
@@ -66,9 +66,11 @@ class Picar:
         time.sleep(2.5)
         self.forward()
         
-    def move_right(self):
-        fc.turn_right(self.turning_speed)
-        time.sleep(1)
+    def move_east(self):
+        if self.orientation == Direction.NORTH:
+            fc.turn_right(self.turning_speed)
+            time.sleep(1)
+            self.orientation = Direction.EAST
         self.forward()
         
     def move_left(self):
@@ -105,7 +107,7 @@ class Picar:
     
     def find_path(self) -> list[tuple]:
         # TODO: find end destination
-        path = astar(self.x_location, self.y_location, 100 - 1, 50, self.obstacle_map.get_map())
+        path = astar(self.x_location, self.y_location, 55, 5, self.obstacle_map.get_map())
         print(f"Astar path:\t{path}")
 
         return path
