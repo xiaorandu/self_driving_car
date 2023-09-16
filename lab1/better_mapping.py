@@ -109,8 +109,9 @@ def avoid_obstacles():
     path = car.find_path()
 
     for tup in path[1:]:
+        print(f"Moving to {tup}")
         x, y = car.get_direction(tup[0], tup[1])
-        print(f"Moving to: {tup}\nDirections: ({x}, {y})")
+        print(f"Directions got: ({x}, {y})")
         
         if x == 0:
             if y > 0: #move north 1 cm
