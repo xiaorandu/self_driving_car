@@ -113,17 +113,17 @@ def avoid_obstacles():
         print(f"Moving to: {tup}\nDirections: ({x}, {y})")
         
         if x == 0:
-            if y > 0: #move forward
+            if y > 0: #move north
                 car.forward()
             elif y == 0:
                 fc.stop()
-            else: #move backward
+            else: #move south
                 car.backward()
         
         elif y == 0:
-            if x > 0: #to the right
+            if x > 0: # move east
                 car.move_east()
-            else: #to the left
+            else: # move west
                 car.move_left()
                 
         elif y / x > 0:

@@ -6,8 +6,9 @@ from astar import astar
 import time
 
 FORWARD_SPEED = 10
+FORWARD_WAIT = .07
 BACKWARD_SPEED = 10
-TURNING_SPEED = 50
+TURNING_SPEED = 70
 DIST_TO_OBSTACLE = 35
 SERVO_OFFSET = 9 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero. 9 works for BR. Was 45.
 
@@ -15,7 +16,10 @@ ANGLE_RANGE = 144
 STEP = 18
 #inital scan angle is set to 72
 current_angle = 90
+
+# how far should the servo turn to the left? 0 is pointing forward.
 max_angle = ANGLE_RANGE/2
+# how far should the servo turn to the right?
 min_angle = -ANGLE_RANGE/2
 scan_list = []
 angle_to_dist = {}
@@ -35,6 +39,7 @@ class Picar:
         self.servo_step = STEP
 
         self.forward_speed = FORWARD_SPEED
+        self.forward_wait = FORWARD_WAIT
         self.backward_speed = BACKWARD_SPEED
         self.turning_speed = TURNING_SPEED
 
@@ -48,6 +53,8 @@ class Picar:
 
     def forward(self) -> None:
         fc.forward(self.forward_speed)
+        time.sleep(self.forward_wait)
+        fc.stop()
     
     def backward(self) -> None:
         fc.backward(self.backward_speed)
@@ -72,6 +79,8 @@ class Picar:
             time.sleep(1)
             self.orientation = Direction.EAST
         self.forward()
+        time.sleep(self.forward_wait)
+        fc.stop()
         
     def move_left(self):
         fc.turn_left(self.turning_speed)
