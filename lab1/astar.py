@@ -86,12 +86,11 @@ def get_path(end):
         path.append((curr.prev.row,curr.prev.col,curr.prev.f))
         curr = curr.prev
         
-    print(path[::-1])
     return path[::-1]
 
-# if __name__ == "__main__":
-#     obstacle_map = ObstacleMap(10).obstacle_map
-#     print(obstacle_map)
-#     astar(0, 0, 5, 5, obstacle_map)
+if __name__ == "__main__":
+    obstacle_map = ObstacleMap(10).obstacle_map
+    print(f"obs map:\n{obstacle_map}")
+    astar(0, 0, 5, 5, obstacle_map)
 
     

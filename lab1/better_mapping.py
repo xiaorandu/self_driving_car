@@ -2,6 +2,7 @@ import picar_4wd as fc
 import time
 from picar_4wd import servo
 from obstacle_map import ObstacleMap
+from Picar import Picar
 
 FORWARD_SPEED = 10
 BACKWARD_SPEED = 10
@@ -83,15 +84,12 @@ def naive_drive():
         if not scan_list:
             continue
         
-        obstacle_map.map(angle_to_dist=angle_to_dist)
         
         #scan angular range 54° through -54°
         scan_range = scan_list[0:7] 
         print(f"scan_range:\t{scan_range}")
       
         if 1 in scan_range or 0 in scan_range:
-            obstacle_map.set_update(to_set=False)
-            obstacle_map.reset_map()
             fc.stop()
             fc.backward(BACKWARD_SPEED)
             time.sleep(0.2)
@@ -99,17 +97,59 @@ def naive_drive():
             # which side of the obstacle can we see more around?
             if more_space_right(scan_range):
                 fc.turn_right(FORWARD_SPEED)
-                #pass
             else:
                 fc.turn_left(FORWARD_SPEED)
-                #pass
        
         else:
-            obstacle_map.set_update(to_set=True)
             fc.forward(FORWARD_SPEED)
+
+def avoid_obstacles():
+    car = Picar()
+    car.scan_env_and_map()
+    path = car.find_path()
+
+    for tup in path[1:]:
+        x, y = car.get_direction(tup[0], tup[1])
+        print(f"Moving to: {tup}\nDirections: ({x}, {y})")
+        
+        if x == 0:
+            if y > 0: #move forward
+                car.forward()
+            elif y == 0:
+                fc.stop()
+            else: #move backward
+                car.backward()
+        
+        elif y == 0:
+            if x > 0: #to the right
+                car.move_right()
+            else: #to the left
+                car.move_left()
+                
+        elif y / x > 0:
+            if y > 0: #to the front right
+                car.move_front_right()
+            else: #to the back left
+                car.move_back_left()
+                
+        elif y / x < 0:
+            if y > 0: #to the front left
+                car.move_front_left()
+            else: #to the back right
+                car.move_back_right()
+
+        # TODO: update car orientation 
+        car.update_location(x, y)
+        time.sleep(.25)                
+        
+        
+
+
+
 
 if __name__ == "__main__":
     try: 
-        naive_drive()
+        # naive_drive()
+        avoid_obstacles()
     finally: 
         fc.stop()
