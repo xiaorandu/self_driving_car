@@ -109,9 +109,9 @@ def avoid_obstacles():
     path = car.find_path()
 
     for tup in path[1:]:
-        print(f"Moving to {tup}")
-        (x, y), (pre_x, pre_y) = car.get_direction(tup[0], tup[1])
-        print(f"Directions got: ({x}, {y})")
+        print(f"Car at ({car.x_location}, {car.y_location})\nGoing to {tup}")
+        (x, y), (pre_x, pre_y) = car.get_direction(tup[0], tup[1]) # returns (transformed_coords) (pre_transform_coords)
+        print(f"Transformed directions: ({x}, {y})")
         
         if x == 0:
             if y > 0: #move north 1 cm

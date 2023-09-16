@@ -92,7 +92,7 @@ class Picar:
     def forward(self) -> None:
         fc.forward(self.forward_speed)
         time.sleep(self.forward_wait)
-        fc.stop()
+        # fc.stop()
     
     def backward(self) -> None:
         fc.backward(self.backward_speed)
@@ -110,15 +110,6 @@ class Picar:
         fc.turn_right(self.turning_speed)
         time.sleep(2.5)
         self.forward()
-        
-    # def move_east(self):
-    #     if self.orientation == Direction.NORTH:
-    #         fc.turn_right(self.turning_speed)
-    #         time.sleep(1)
-    #         self.orientation = Direction.EAST
-    #     self.forward()
-    #     time.sleep(self.forward_wait)
-    #     fc.stop()
 
     def move_right(self):
         fc.turn_right(self.turning_speed)
@@ -166,9 +157,6 @@ class Picar:
     
     def get_direction(self, x_dest, y_dest) -> tuple[tuple, tuple]:
         to_steer = (x_dest - self.x_location, y_dest - self.y_location)
-        print(f"Cur location { self.x_location} {self.y_location}")
-        print(f"to steer: {to_steer}")
-
         # convert coords
         new_coords = normalize_direction[self.orientation][to_steer] if self.orientation != Direction.NORTH else to_steer
         return new_coords, to_steer
