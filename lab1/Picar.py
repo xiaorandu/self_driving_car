@@ -97,12 +97,6 @@ class Picar:
     def backward(self) -> None:
         fc.backward(self.backward_speed)
 
-    def turn_right(self) -> None:
-        fc.turn_right(self.turning_speed)
-
-    def turn_left(self) -> None:
-        fc.turn_left(self.turning_speed)
-
     def stop(self) -> None:
         fc.stop()
 
@@ -112,13 +106,13 @@ class Picar:
         self.forward()
 
     def move_right(self):
-        fc.turn_right()
+        fc.turn_right(self.turning_speed)
         time.sleep(1.15)
         self.forward()
         time.sleep(self.forward_wait)
         
     def move_left(self):
-        fc.turn_left()
+        fc.turn_left(self.turning_speed)
         time.sleep(1.15)
         self.forward()
         time.sleep(self.forward_wait)
