@@ -170,6 +170,11 @@ def avoid_obstacles():
         new_path = car.rescan_and_reconcile_maps()
         route = route_from_path(new_path, car)
 
+        # account for bad reading
+        if not route and not car.reached_goal():
+            new_path = car.rescan_and_reconcile_maps()
+            route = route_from_path(new_path, car)
+
     # for dir_dist in route:
     #     direction = dir_dist[0]
     #     distance = dir_dist[1]
