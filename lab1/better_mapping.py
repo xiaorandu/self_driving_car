@@ -175,6 +175,8 @@ def avoid_obstacles():
             new_path = car.rescan_and_reconcile_maps()
             route = route_from_path(new_path, car)
 
+    print(f"Success, you drove to the destination")
+
     # for dir_dist in route:
     #     direction = dir_dist[0]
     #     distance = dir_dist[1]

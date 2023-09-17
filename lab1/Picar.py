@@ -167,7 +167,6 @@ class Picar:
         fc.turn_left(self.turning_speed)
         time.sleep(1.15)
         self.forward(distance)
-        time.sleep(self.forward_wait)
     
     def scan_env_and_map(self) -> None:
         self.angle_to_dist = {}
