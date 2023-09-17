@@ -22,7 +22,7 @@ SERVO_STEP = 18
 
 
 def demo_obstacle_map():
-    servo.offset = 30
+    servo.offset = 45
     servo.set_angle(0)
     obs_map = ObstacleMap(debug=True)
     
@@ -34,7 +34,10 @@ def demo_obstacle_map():
     
     obs_map.do_map(angle_to_dist)
     mat = obs_map.get_map()
-    print(mat)
+    
+    # print the matrix
+    for row in mat:
+        print(' '.join(map(str, row)))
 
 
 
