@@ -225,5 +225,3 @@ class Picar:
 
     def update_orientation(self, x: int, y: int) -> None:
         self.orientation = coords_to_direction[x, y]
-
-        

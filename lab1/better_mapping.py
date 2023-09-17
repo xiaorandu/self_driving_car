@@ -4,6 +4,18 @@ from picar_4wd import servo
 from obstacle_map import ObstacleMap
 from Picar import Picar, Direction
 
+# packages needed for detect_objects
+import argparse
+import sys
+import time
+import cv2
+from tflite_support.task import core
+from tflite_support.task import processor
+from tflite_support.task import vision
+import object_detection.utils
+from multiprocessing import Process
+
+
 FORWARD_SPEED = 10
 BACKWARD_SPEED = 10
 DIST_TO_OBSTACLE = 35
@@ -18,6 +30,14 @@ max_angle = ANGLE_RANGE/2
 min_angle = -ANGLE_RANGE/2
 scan_list = []
 angle_to_dist = {}
+
+# object detection settings
+MODEL = 'efficientdet_lite0.tflite'
+CAMERA_ID = 0
+FRAME_WIDTH = 640
+FRAME_HEIGHT = 480
+NUM_THREADS = 4
+ENABLE_EDGE_TPU = False
 
 
 #returns a 1 for turn right, 0 for turn left.
@@ -156,9 +176,6 @@ def route_from_path(path, car):
                     distance = 0
                 distance += 1
 
-        #car.update_location(pre_x, pre_y)
-        #car.update_orientation(pre_x, pre_y)
-
     if distance > 0:
         route.append((direction, distance))
     return route
@@ -176,9 +193,99 @@ def avoid_obstacles():
 
         car.move(direction, distance)
 
+def detect_objects(model: str, camera_id: int, width: int, height: int, num_threads: int,
+        enable_edgetpu: bool) -> None:
+    """Continuously run inference on images acquired from the camera.
+
+    Args:
+        model: Name of the TFLite object detection model.
+        camera_id: The camera id to be passed to OpenCV.
+        width: The width of the frame captured from the camera.
+        height: The height of the frame captured from the camera.
+        num_threads: The number of CPU threads to run the model.
+        enable_edgetpu: True/False whether the model is a EdgeTPU model.
+    """
+
+    # Variables to calculate FPS
+    counter, fps = 0, 0
+    start_time = time.time()
+    fps_avg_frame_count = 10
+
+    # Start capturing video input from the camera cv2.CAP_GSTREAMER
+    cap = cv2.VideoCapture(camera_id, cv2.CAP_V4L2, (cv2.CAP_PROP_HW_ACCELERATION, cv2.VIDEO_ACCELERATION_ANY))
+    #print(cv2.getBuildInformation())
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+
+    # Initialize the object detection model
+    base_options = core.BaseOptions(
+        file_name=model, use_coral=enable_edgetpu, num_threads=num_threads)
+    detection_options = processor.DetectionOptions(
+        max_results=3, score_threshold=0.3)
+    options = vision.ObjectDetectorOptions(
+        base_options=base_options, detection_options=detection_options)
+    detector = vision.ObjectDetector.create_from_options(options)
+
+    # Continuously capture images from the camera and run inference
+    while cap.isOpened():
+        success, image = cap.read()
+        if not success:
+            sys.exit(
+                'ERROR: Unable to read from webcam. Please verify your webcam settings.'
+            )
+
+        counter += 1
+        image = cv2.flip(image, -1) # -1 flips the image horizontally and vertically. 1 flips horizontally. 0 flips vertically.
+
+        # Convert the image from BGR to RGB as required by the TFLite model.
+        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+        # Create a TensorImage object from the RGB image.
+        input_tensor = vision.TensorImage.create_from_array(rgb_image)
+
+        # Run object detection estimation using the model.
+        detection_result = detector.detect(input_tensor)
+
+        # Calculate the FPS
+        if counter % fps_avg_frame_count == 0:
+            end_time = time.time()
+            fps = fps_avg_frame_count / (end_time - start_time)
+            start_time = time.time()
+
+        # Show the FPS
+        fps_text = 'FPS = {:.1f}'.format(fps)
+        #print(fps_text)
+
+        # Detect specific objects
+        for detection in detection_result.detections:
+            category = detection.categories[0]
+            category_name = category.category_name
+
+            # PERSON
+            if category.index == 0 and category.score > .75:
+                # stop until person is no longer detected
+                pass
+
+            # TRAFFIC LIGHT
+            if category.index == 9 and category.score > .75:
+                pass
+
+            # STOP SIGN
+            if category.index == 12 and category.score > .75:
+                #sees a stop sign. stop for 5 seconds before continuing.
+                fc.stop()
+                time.sleep(5)
+
+    cap.release()
+
+
 if __name__ == "__main__":
     try: 
         # naive_drive()
-        avoid_obstacles()
+        p1 = Process(target = avoid_obstacles)
+        p1.start()
+        p2 = Process(target = detect_objects, args = (MODEL, CAMERA_ID, FRAME_WIDTH, FRAME_HEIGHT, NUM_THREADS, ENABLE_EDGE_TPU,))
+        p2.start()
+
     finally: 
         fc.stop()

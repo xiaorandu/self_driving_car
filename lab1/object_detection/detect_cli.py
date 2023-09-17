@@ -46,6 +46,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
   #print(cv2.getBuildInformation())
   cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
   cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+  #print(cv2.getBuildInformation())
 
   # Initialize the object detection model
   base_options = core.BaseOptions(
@@ -84,7 +85,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
 
     # Show the FPS
     fps_text = 'FPS = {:.1f}'.format(fps)
-    #print(fps_text)
+    print(fps_text)
 
     # Detect specific objects
     for detection in detection_result.detections:
@@ -94,7 +95,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
       # PERSON
       if category.index == 0 and category.score > .75:
         # stop until person is no longer detected
-        pass
+        print('Car detects a person.')
 
       # TRAFFIC LIGHT
       if category.index == 9 and category.score > .75:
@@ -103,7 +104,7 @@ def run(model: str, camera_id: int, width: int, height: int, num_threads: int,
       # STOP SIGN
       if category.index == 12 and category.score > .75:
         #sees a stop sign. 
-        pass
+        print('Car detects a stop sign.')
         # stop for N seconds before continuing.
 
   cap.release()
