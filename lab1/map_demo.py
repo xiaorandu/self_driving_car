@@ -16,15 +16,25 @@ us_step = STEP
 current_angle = 90
 max_angle = ANGLE_RANGE/2
 min_angle = -ANGLE_RANGE/2
-scan_list = []
-angle_to_dist = {}
+
+DISTANCE_OFFSET = -5.36
+SERVO_STEP = 18
 
 
 def demo_obstacle_map():
     servo.offset = 30
     servo.set_angle(0)
     obs_map = ObstacleMap(debug=True)
-    obs_map.do_map()
+    
+    angle_to_dist = {}
+    cur_angle = min_angle
+    while cur_angle <= max_angle:
+        angle_to_dist[cur_angle] = fc.get_distance_at(cur_angle) + DISTANCE_OFFSET
+        cur_angle += SERVO_STEP
+    
+    obs_map.do_map(angle_to_dist)
+    mat = obs_map.get_map()
+    print(mat)
 
 
 
