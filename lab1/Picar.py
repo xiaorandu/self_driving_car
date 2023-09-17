@@ -86,6 +86,9 @@ class Picar:
         self.y_location = 0
         self.orientation = Direction.NORTH
 
+        self.x_end = 99
+        self.y_end = 50
+
         self.angle_to_dist = {}
 
     def move(self, direction, distance) -> None:
@@ -164,24 +167,6 @@ class Picar:
         fc.turn_left(self.turning_speed)
         time.sleep(1.15)
         self.forward(distance)
-     
-    # def move_front_right(self):
-    #     self.turn_right()
-    #     time.sleep(1)
-    #     self.forward()
-    
-    # def move_front_left(self):
-    #     self.turn_left()
-    #     time.sleep(1)
-    #     self.forward()
-    
-    # def move_back_right(self):
-    #     self.turn_around()
-    #     self.move_front_left()
-        
-    # def move_back_left(self):
-    #     self.turn_around()
-    #     self.move_front_right()
     
     def scan_env_and_map(self) -> None:
         self.angle_to_dist = {}
@@ -191,10 +176,34 @@ class Picar:
             cur_angle += self.servo_step
 
         self.obstacle_map.do_map(self.angle_to_dist)
+
+    def rescan_and_reconcile_maps(self) -> list[tuple]:
+        new_map = ObstacleMap(size=self.obstacle_map.size)
+
+        self.x_end = int(new_map.size / 2) + (self.x_end - self.x_location)
+        self.y_end = self.y_end - self.y_location
+
+        # if transformed endpoint is out of bounds
+        if not self.x_end < new_map.size:
+            print(f"Transformed end location out of bounds. New x end: {self.x_end}, but Map size {new_map.size}")
+            x_diff  = self.x_end - new_map.size
+            new_map = ObstacleMap(size=new_map.size + x_diff + 1) # + 1 for buffer
+        if not self.y_end < new_map.size:
+            print(f"Transformed end location out of bounds. New y end: {self.y_end}, but Map size {new_map.size}")
+            y_diff  = self.y_end - new_map.size
+            new_map = ObstacleMap(size=new_map.size + y_diff + 1) # + 1 for buffer
+
+        self.x_location = int(new_map.size / 2)
+        self.y_location = 0
+        self.obstacle_map = new_map
+        self.scan_env_and_map()
+
+        return self.find_path()
+        
     
     def find_path(self) -> list[tuple]:
         # TODO: find end destination
-        path = astar(self.x_location, self.y_location, 99, 50, self.obstacle_map.get_map())
+        path = astar(self.x_location, self.y_location, self.x_end, self.y_end, self.obstacle_map.get_map()) #astar signature end_r and end_c are swapped
         print(f"Astar path:\t{path}")
 
         return path
@@ -225,5 +234,8 @@ class Picar:
 
     def update_orientation(self, x: int, y: int) -> None:
         self.orientation = coords_to_direction[x, y]
+
+    def reached_goal(self) -> bool:
+        return (self.x_end == self.x_location and self.y_end == self.y_location)
 
         

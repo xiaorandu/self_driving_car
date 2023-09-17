@@ -110,16 +110,12 @@ def route_from_path(path, car):
     prev = (car.x_location, car.y_location)
 
     for tup in path[1:]:
-        print(f"Car at ({car.x_location}, {car.y_location})\nGoing to {tup}")
-        #(x, y), (pre_x, pre_y) = car.get_direction(tup[0], tup[1]) # returns (transformed_coords) (pre_transform_coords)
-
         # subtract the current location tuple from the previous to see which value has changed x or y.
         dir = tuple(map(lambda i, j: i - j, (tup[0], tup[1]), prev))
         prev = (tup[0], tup[1]) # update prev to current
 
         x = dir[0]
         y = dir[1]
-        print(f"Transformed directions: ({x}, {y})")
 
         if x == 0:
             if y > 0: #move north
@@ -156,9 +152,6 @@ def route_from_path(path, car):
                     distance = 0
                 distance += 1
 
-        #car.update_location(pre_x, pre_y)
-        #car.update_orientation(pre_x, pre_y)
-
     if distance > 0:
         route.append((direction, distance))
     return route
@@ -170,15 +163,28 @@ def avoid_obstacles():
 
     route = route_from_path(path, car)
 
-    for dir_dist in route:
-        direction = dir_dist[0]
-        distance = dir_dist[1]
-
+    while not car.reached_goal():
+        direction, distance = route[0]
         car.move(direction, distance)
+
+        new_path = car.rescan_and_reconcile_maps()
+        route = route_from_path(new_path, car)
+
+        # account for bad reading
+        if not route and not car.reached_goal():
+            new_path = car.rescan_and_reconcile_maps()
+            route = route_from_path(new_path, car)
+
+    print(f"Success, you drove to the destination")
+
+    # for dir_dist in route:
+    #     direction = dir_dist[0]
+    #     distance = dir_dist[1]
+
+    #     car.move(direction, distance)
 
 if __name__ == "__main__":
     try: 
-        # naive_drive()
         avoid_obstacles()
     finally: 
         fc.stop()
