@@ -236,4 +236,7 @@ class Picar:
     def update_orientation(self, x: int, y: int) -> None:
         self.orientation = coords_to_direction[x, y]
 
+    def reached_goal(self) -> bool:
+        return (self.x_end == self.x_location and self.y_end == self.y_location)
+
         
