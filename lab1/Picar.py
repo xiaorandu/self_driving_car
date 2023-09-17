@@ -6,7 +6,7 @@ from astar import astar
 import time
 
 FORWARD_SPEED = 10
-FORWARD_WAIT = .05 # configure to make sure it only goes forward 1 cm.
+SEC_PER_CM = .05 # configure to make sure it only goes forward 1 cm.
 BACKWARD_SPEED = 10
 TURNING_SPEED = 20
 DIST_TO_OBSTACLE = 35
@@ -76,7 +76,7 @@ class Picar:
         self.servo_step = STEP
 
         self.forward_speed = FORWARD_SPEED
-        self.forward_wait = FORWARD_WAIT
+        self.sec_per_cm = SEC_PER_CM
         self.distance_offset = DISTANCE_OFFSET
         self.backward_speed = BACKWARD_SPEED
         self.turning_speed = TURNING_SPEED
@@ -88,14 +88,64 @@ class Picar:
 
         self.angle_to_dist = {}
 
+    def move(self, direction, distance) -> None:
+        if direction == Direction.NORTH:
+            if self.orientation == Direction.NORTH:
+                self.forward(distance)
+            elif self.orientation == Direction.SOUTH:
+                self.backward(distance)
+            elif self.orientation == Direction.EAST:
+                self.move_left(distance)
+                self.orientation = Direction.NORTH
+            elif self.orientation == Direction.WEST:
+                self.move_right(distance)
+                self.orientation = Direction.NORTH
 
-    def forward(self) -> None:
+        elif direction == Direction.SOUTH:
+            if self.orientation == Direction.NORTH:
+                self.backward(distance)
+            elif self.orientation == Direction.SOUTH:
+                self.forward(distance)
+            elif self.orientation == Direction.EAST:
+                self.move_right(distance)
+                self.orientation = Direction.SOUTH
+            elif self.orientation == Direction.WEST:
+                self.move_left(distance)
+                self.orientation = Direction.SOUTH
+
+        elif direction == Direction.EAST:
+            if self.orientation == Direction.NORTH:
+                self.move_right(distance)
+                self.orientation = Direction.EAST
+            elif self.orientation == Direction.SOUTH:
+                self.move_left(distance)
+                self.orientation = Direction.EAST
+            elif self.orientation == Direction.EAST:
+                self.forward(distance)
+            elif self.orientation == Direction.WEST:
+                self.backward(distance)
+
+        elif direction == Direction.WEST:
+            if self.orientation == Direction.NORTH:
+                self.move_left(distance)
+                self.orientation = Direction.WEST
+            elif self.orientation == Direction.SOUTH:
+                self.move_right(distance)
+                self.orientation = Direction.WEST
+            elif self.orientation == Direction.EAST:
+                self.backward(distance)
+            elif self.orientation == Direction.WEST:
+                self.forward(distance)
+        self.update_location_dist(direction, distance)
+
+    def forward(self, distance) -> None:
         fc.forward(self.forward_speed)
-        time.sleep(self.forward_wait)
+        time.sleep(self.sec_per_cm * distance)
         # fc.stop()
     
-    def backward(self) -> None:
+    def backward(self, distance) -> None:
         fc.backward(self.backward_speed)
+        time.sleep(self.sec_per_cm * distance)
 
     def stop(self) -> None:
         fc.stop()
@@ -105,17 +155,15 @@ class Picar:
         time.sleep(2.3)
         self.forward()
 
-    def move_right(self):
+    def move_right(self, distance):
         fc.turn_right(self.turning_speed)
         time.sleep(1.15)
-        self.forward()
-        time.sleep(self.forward_wait)
+        self.forward(distance)
         
-    def move_left(self):
+    def move_left(self, distance):
         fc.turn_left(self.turning_speed)
         time.sleep(1.15)
-        self.forward()
-        time.sleep(self.forward_wait)
+        self.forward(distance)
      
     # def move_front_right(self):
     #     self.turn_right()
@@ -160,6 +208,20 @@ class Picar:
     def update_location(self, new_x: int, new_y: int) -> None:
         self.x_location += new_x
         self.y_location += new_y
+
+    def update_location_dist(self, direction: int, distance: int) -> None:
+        if direction == Direction.NORTH:
+            self.y_location += distance
+
+        elif direction == Direction.SOUTH:
+            self.y_location -= distance
+
+        elif direction == Direction.EAST:
+            self.x_location += distance
+
+        elif direction == Direction.WEST:
+            self.x_location -= distance
+
 
     def update_orientation(self, x: int, y: int) -> None:
         self.orientation = coords_to_direction[x, y]

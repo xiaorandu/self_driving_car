@@ -2,7 +2,7 @@ import picar_4wd as fc
 import time
 from picar_4wd import servo
 from obstacle_map import ObstacleMap
-from Picar import Picar
+from Picar import Picar, Direction
 
 FORWARD_SPEED = 10
 BACKWARD_SPEED = 10
@@ -103,50 +103,78 @@ def naive_drive():
         else:
             fc.forward(FORWARD_SPEED)
 
+def route_from_path(path, car):
+    route = [] # 
+    direction = Direction.NORTH
+    distance = 0 # distance to move in cm
+    prev = (car.x_location, car.y_location)
+
+    for tup in path[1:]:
+        print(f"Car at ({car.x_location}, {car.y_location})\nGoing to {tup}")
+        #(x, y), (pre_x, pre_y) = car.get_direction(tup[0], tup[1]) # returns (transformed_coords) (pre_transform_coords)
+
+        # subtract the current location tuple from the previous to see which value has changed x or y.
+        dir = tuple(map(lambda i, j: i - j, (tup[0], tup[1]), prev))
+        prev = (tup[0], tup[1]) # update prev to current
+
+        x = dir[0]
+        y = dir[1]
+        print(f"Transformed directions: ({x}, {y})")
+
+        if x == 0:
+            if y > 0: #move north
+                if direction != Direction.NORTH:
+                    if distance > 0:
+                        route.append((direction, distance))
+                    direction = Direction.NORTH
+                    distance = 0
+                distance += 1
+            elif y == 0: # end of path
+                if distance > 0:
+                    route.append((direction, distance))
+            else: #move south
+                if direction != Direction.SOUTH:
+                    if distance > 0:
+                        route.append((direction, distance))
+                    direction = Direction.SOUTH
+                    distance = 0
+                distance += 1
+        
+        elif y == 0:
+            if x > 0: # move east
+                if direction != Direction.EAST:
+                    if distance > 0:
+                        route.append((direction, distance))
+                    direction = Direction.EAST
+                    distance = 0
+                distance += 1
+            else: # move west
+                if direction != Direction.WEST:
+                    if distance > 0:
+                        route.append((direction, distance))
+                    direction = Direction.WEST
+                    distance = 0
+                distance += 1
+
+        #car.update_location(pre_x, pre_y)
+        #car.update_orientation(pre_x, pre_y)
+
+    if distance > 0:
+        route.append((direction, distance))
+    return route
+
 def avoid_obstacles():
     car = Picar(map_size=100)
     car.scan_env_and_map()
     path = car.find_path()
 
-    for tup in path[1:]:
-        print(f"Car at ({car.x_location}, {car.y_location})\nGoing to {tup}")
-        (x, y), (pre_x, pre_y) = car.get_direction(tup[0], tup[1]) # returns (transformed_coords) (pre_transform_coords)
-        print(f"Transformed directions: ({x}, {y})")
-        
-        if x == 0:
-            if y > 0: #move north 1 cm
-                car.forward()
-            elif y == 0:
-                fc.stop()
-            else: #move south
-                car.backward()
-        
-        elif y == 0:
-            if x > 0: # move east
-                car.move_right()
-            else: # move west
-                car.move_left()
+    route = route_from_path(path, car)
 
-        # These should never execute. Car should only move North, East, South, or West   
-        # elif y / x > 0:
-        #     if y > 0: #to the front right
-        #         car.move_front_right()
-        #     else: #to the back left
-        #         car.move_back_left()
-                
-        # elif y / x < 0:
-        #     if y > 0: #to the front left
-        #         car.move_front_left()
-        #     else: #to the back right
-        #         car.move_back_right()
+    for dir_dist in route:
+        direction = dir_dist[0]
+        distance = dir_dist[1]
 
-        car.update_location(pre_x, pre_y)
-        car.update_orientation(pre_x, pre_y)
-        
-        
-
-
-
+        car.move(direction, distance)
 
 if __name__ == "__main__":
     try: 
