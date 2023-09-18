@@ -3,6 +3,7 @@ import time
 from picar_4wd import servo
 from obstacle_map import ObstacleMap
 from Picar import Picar, Direction
+import os
 
 # packages needed for detect_objects
 import argparse
@@ -13,8 +14,7 @@ from tflite_support.task import core
 from tflite_support.task import processor
 from tflite_support.task import vision
 import object_detection.utils
-from multiprocessing import Process
-
+from multiprocessing import Process, Value
 
 FORWARD_SPEED = 10
 BACKWARD_SPEED = 10
@@ -32,7 +32,7 @@ scan_list = []
 angle_to_dist = {}
 
 # object detection settings
-MODEL = 'efficientdet_lite0.tflite'
+MODEL = '/home/bruffrid/self_driving_car/lab1/object_detection/efficientdet_lite0.tflite'
 CAMERA_ID = 0
 FRAME_WIDTH = 640
 FRAME_HEIGHT = 480
@@ -176,35 +176,44 @@ def route_from_path(path, car):
         route.append((direction, distance))
     return route
 
-def avoid_obstacles():
+def avoid_obstacles(stop):
     car = Picar(map_size=100)
     car.scan_env_and_map()
     path = car.find_path()
+    #print('move process id:', os.getpid())
+
+    #car.move(Direction.NORTH, 5)
+    #car.move(Direction.EAST, 1)
+    #car.move(Direction.WEST, 1)
 
     route = route_from_path(path, car)
 
-    while not car.reached_goal():
-        direction, distance = route[0]
-        car.move(direction, distance)
-        new_path = car.rescan_and_reconcile_maps()
-        route = route_from_path(new_path, car)
+    #while not car.reached_goal():
+    #    direction, distance = route[0]
+    #    car.move(direction, distance)
+    #    new_path = car.rescan_and_reconcile_maps()
+    #    route = route_from_path(new_path, car)
 
         # account for bad reading
-        if not route and not car.reached_goal():
-            new_path = car.rescan_and_reconcile_maps()
-            route = route_from_path(new_path, car)
+    #    if not route and not car.reached_goal():
+    #        new_path = car.rescan_and_reconcile_maps()
+    #        route = route_from_path(new_path, car)
 
-    print(f"Success, you drove to the destination")
+    #fc.stop()
+    #print(f"Success, you drove to the destination")
 
-    # for dir_dist in route:
-    #     direction = dir_dist[0]
-    #     distance = dir_dist[1]
-
-    #     car.move(direction, distance)
+    for dir_dist in route:
+        direction = dir_dist[0]
+        distance = dir_dist[1]
+        if stop.value == 1:
+            # pause for 5 seconds if it sees a stop sign.
+            time.sleep(5)
+        car.move(direction, distance)
+        
 
 
 def detect_objects(model: str, camera_id: int, width: int, height: int, num_threads: int,
-        enable_edgetpu: bool) -> None:
+        enable_edgetpu: bool, stop) -> None:
     """Continuously run inference on images acquired from the camera.
 
     Args:
@@ -215,6 +224,7 @@ def detect_objects(model: str, camera_id: int, width: int, height: int, num_thre
         num_threads: The number of CPU threads to run the model.
         enable_edgetpu: True/False whether the model is a EdgeTPU model.
     """
+    #print('obj process id:', os.getpid())
 
     # Variables to calculate FPS
     counter, fps = 0, 0
@@ -265,6 +275,7 @@ def detect_objects(model: str, camera_id: int, width: int, height: int, num_thre
         # Show the FPS
         fps_text = 'FPS = {:.1f}'.format(fps)
         #print(fps_text)
+        stop.value = 0
 
         # Detect specific objects
         for detection in detection_result.detections:
@@ -274,6 +285,7 @@ def detect_objects(model: str, camera_id: int, width: int, height: int, num_thre
             # PERSON
             if category.index == 0 and category.score > .75:
                 # stop until person is no longer detected
+                #print('Car detects a person.')
                 pass
 
             # TRAFFIC LIGHT
@@ -282,19 +294,23 @@ def detect_objects(model: str, camera_id: int, width: int, height: int, num_thre
 
             # STOP SIGN
             if category.index == 12 and category.score > .75:
-                #sees a stop sign. stop for 5 seconds before continuing.
-                fc.stop()
-                time.sleep(5)
+                #sees a stop sign.
+                #print('Car detects a stop sign.')
+                stop.value = 1
 
     cap.release()
 
 if __name__ == "__main__":
     try: 
-        # naive_drive()
-        p1 = Process(target = avoid_obstacles)
+        stop = Value('b', 0)
+        #print('parent process id:', os.getpid())
+
+        p1 = Process(target = avoid_obstacles, args=(stop,))
         p1.start()
-        p2 = Process(target = detect_objects, args = (MODEL, CAMERA_ID, FRAME_WIDTH, FRAME_HEIGHT, NUM_THREADS, ENABLE_EDGE_TPU,))
+        p2 = Process(target = detect_objects, args = (MODEL, CAMERA_ID, FRAME_WIDTH, FRAME_HEIGHT, NUM_THREADS, ENABLE_EDGE_TPU, stop,))
+        p2.daemon = True # stop this process once p1 finishes.
         p2.start()
+        p1.join() # don't stop execution of parent and daemon processes until p1 finishes.
 
     finally: 
         fc.stop()

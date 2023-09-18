@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 
-CLEARANCE = 2
+CLEARANCE = 10
 class ObstacleMap:
     """
     Mantains a map of the environment by populating a 2d array while moving forward

@@ -6,11 +6,13 @@ from astar import astar
 import time
 
 FORWARD_SPEED = 10
-SEC_PER_CM = .05 # configure to make sure it only goes forward 1 cm.
+SEC_PER_CM = .0425 # configure to make sure it only goes forward 1 cm.
 BACKWARD_SPEED = 10
-TURNING_SPEED = 20
+TURNING_SPEED = 100
+TIME_TO_TURN_RIGHT_90 = .7 #in seconds
+TIME_TO_TURN_LEFT_90 = 1
 DIST_TO_OBSTACLE = 35
-DISTANCE_OFFSET = -5.36 # offset to make sure objects are detected at accurate distance as measured from front of vehicle. They were being measured as being too far away.
+DISTANCE_OFFSET = 0 #-4.36 # offset to make sure objects are detected at accurate distance as measured from front of vehicle. They were being measured as being too far away.
 SERVO_OFFSET = 9 # customize to make the servo point straight forward at angle zero. If it is already, just set this to zero. 9 works for BR. Was 45.
 
 ANGLE_RANGE = 144
@@ -80,6 +82,9 @@ class Picar:
         self.distance_offset = DISTANCE_OFFSET
         self.backward_speed = BACKWARD_SPEED
         self.turning_speed = TURNING_SPEED
+        self.time_to_turn_right_90 = TIME_TO_TURN_RIGHT_90
+        self.time_to_turn_left_90 = TIME_TO_TURN_LEFT_90
+
 
         self.obstacle_map = ObstacleMap(size=map_size)
         self.x_location = int(self.obstacle_map.size / 2)
@@ -87,7 +92,7 @@ class Picar:
         self.orientation = Direction.NORTH
 
         self.x_end = 99
-        self.y_end = 50
+        self.y_end = 80
 
         self.angle_to_dist = {}
 
@@ -144,11 +149,12 @@ class Picar:
     def forward(self, distance) -> None:
         fc.forward(self.forward_speed)
         time.sleep(self.sec_per_cm * distance)
-        # fc.stop()
+        fc.stop()
     
     def backward(self, distance) -> None:
         fc.backward(self.backward_speed)
         time.sleep(self.sec_per_cm * distance)
+        fc.stop()
 
     def stop(self) -> None:
         fc.stop()
@@ -160,12 +166,12 @@ class Picar:
 
     def move_right(self, distance):
         fc.turn_right(self.turning_speed)
-        time.sleep(1.15)
+        time.sleep(self.time_to_turn_right_90)
         self.forward(distance)
         
     def move_left(self, distance):
         fc.turn_left(self.turning_speed)
-        time.sleep(1.15)
+        time.sleep(self.time_to_turn_left_90)
         self.forward(distance)
     
     def scan_env_and_map(self) -> None:
