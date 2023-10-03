@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_app/AppPage.dart';
+//import 'package:flutter_blue_app/AppPage.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 import './ChatPage.dart';
-//import './ChatPage2.dart';
+import './AppPage.dart';
 
 
 class MainPage extends StatefulWidget {
@@ -24,14 +24,14 @@ class _MainPage extends State<MainPage> {
     FlutterBluetoothSerial.instance
         .getBondedDevices()
         .then((List<BluetoothDevice> bondedDevices) {
-      setState(() {
-        for(BluetoothDevice device in bondedDevices){
-          if (device.name == "raspberrypi"){
-            _device = device;
-          }
-        }
-      });
-    });
+          setState(() {
+            for(BluetoothDevice device in bondedDevices){
+              if (device.name == "raspberrypi"){
+                _device = device;
+              }
+            }
+          });
+        });
   }
 
 
@@ -58,7 +58,7 @@ class _MainPage extends State<MainPage> {
                 onPressed: () async {
                   if (_device != null) {
                     print('Connect -> selected ' + _device.address);
-                    _startChat(context, _device);
+                    _startApp(context, _device);
                   } else {
                     print('Connect -> no device selected');
                   }

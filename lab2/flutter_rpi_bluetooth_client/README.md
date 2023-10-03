@@ -21,3 +21,5 @@ Had to downgrade flutter to v3.7.12
 `cd path/to/flutter`
 `git checkout 3.7.12`
 `flutter doctor`
+
+Make sure you enable location access on the Android App, or it won't be able to detect the bluetooth connection.
