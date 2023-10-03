@@ -11,7 +11,9 @@ def data_received(data):
 
 def send_status_update():
     while True:
-        s.send("Ping..." + "\r\n")
+        i = 1
+        s.send("Ping..." + "i\r\n")
+        i += 1
         time.sleep(1)
 
 s = BluetoothServer(data_received)
