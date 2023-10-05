@@ -28,19 +28,31 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
     s.listen()
     
+    state: int | None = None
     car = Picar()
 
     try:
         while 1:
             client, clientInfo = s.accept()
             print("server recv from: ", clientInfo)
-            data = client.recv(1024)      # receive 1024 Bytes of message in binary format
-            if data != b"":
-                print(data)
-                
-                drive_car(car, data.decode('utf-8').strip())
+            client.settimeout(.2)
 
-                client.sendall(data) # Echo back to client
+            try:
+                data = client.recv(1024)      # receive 1024 Bytes of message in binary format
+                if data != b"":
+                    print(data)
+                    decoded_data =  data.decode('utf-8').strip()
+                    state = decoded_data
+                    
+                    drive_car(car, decoded_data)
+
+                    client.sendall(data)
+            except socket.timeout:
+                if state is not None:
+                    print("Stopping...")
+                    car.stop()
+                    state = None
+
     except Exception as e:
         print(f"Exception:\t{e}") 
         print("Closing socket")
