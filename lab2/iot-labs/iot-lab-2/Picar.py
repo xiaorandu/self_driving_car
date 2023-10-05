@@ -87,7 +87,8 @@ class Picar:
 
 
         # self.obstacle_map = ObstacleMap(size=map_size)
-        self.x_location = int(self.obstacle_map.size / 2)
+        # self.x_location = int(self.obstacle_map.size / 2)
+        self.x_location = 0
         self.y_location = 0
         self.orientation = Direction.NORTH
 
