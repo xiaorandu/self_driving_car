@@ -1,6 +1,6 @@
 import socket
 
-from lab1.Picar import Picar
+from Picar import Picar
 
 HOST = "192.168.12.232" # IP address of your Raspberry PI
 PORT = 65432          # Port to listen on (non-privileged ports are > 1023)
