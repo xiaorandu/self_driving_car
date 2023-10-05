@@ -37,7 +37,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             if data != b"":
                 print(data)
                 
-                drive_car(car, data.decode('utf-8'))
+                drive_car(car, data.decode('utf-8').strip())
 
                 client.sendall(data) # Echo back to client
     except: 
