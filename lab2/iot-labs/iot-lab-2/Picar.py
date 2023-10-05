@@ -147,14 +147,12 @@ class Picar:
                 self.forward(distance)
         self.update_location_dist(direction, distance)
 
-    def forward(self, distance) -> None:
+    def forward(self) -> None:
         fc.forward(self.forward_speed)
-        time.sleep(self.sec_per_cm * distance)
         fc.stop()
     
-    def backward(self, distance) -> None:
+    def backward(self) -> None:
         fc.backward(self.backward_speed)
-        time.sleep(self.sec_per_cm * distance)
         fc.stop()
 
     def stop(self) -> None:
@@ -165,15 +163,11 @@ class Picar:
         time.sleep(2.3)
         self.forward()
 
-    def move_right(self, distance):
+    def move_right(self):
         fc.turn_right(self.turning_speed)
-        time.sleep(self.time_to_turn_right_90)
-        self.forward(distance)
         
-    def move_left(self, distance):
+    def move_left(self):
         fc.turn_left(self.turning_speed)
-        time.sleep(self.time_to_turn_left_90)
-        self.forward(distance)
     
     def scan_env_and_map(self) -> None:
         self.angle_to_dist = {}
