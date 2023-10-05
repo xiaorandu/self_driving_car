@@ -10,16 +10,16 @@ def drive_car(car: Picar, direction: str):
     print(f"Drive car str:\t{direction}")
     if direction == '87':
         print("Forward")
-        car.forward(5)
+        car.forward(1)
     elif direction == '83':
         print("Backward")
-        car.backward(5)
+        car.backward(1)
     elif direction == '65':
         print("Left")
-        car.move_left(5)
+        car.move_left(1)
     elif direction == '68':
         print("Right")
-        car.move_right(5)
+        car.move_right(1)
 
 
 
