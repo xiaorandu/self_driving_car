@@ -40,7 +40,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 drive_car(car, data.decode('utf-8').strip())
 
                 client.sendall(data) # Echo back to client
-    except: 
+    except Exception as e:
+        print(f"Exception:\t{e}") 
         print("Closing socket")
         client.close()
         s.close()
