@@ -30,7 +30,7 @@ def monitor_last_received(car):
     global last_received_time
     while True:
         time_since_last_received = time.time() - last_received_time
-        if time_since_last_received > 0.1: 
+        if time_since_last_received > 0.5: 
             print("Data not received for a while, stopping car.")
             car.stop()
             last_received_time = time.time()
