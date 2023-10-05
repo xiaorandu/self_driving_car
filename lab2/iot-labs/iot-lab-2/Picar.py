@@ -1,8 +1,8 @@
 import picar_4wd as fc
 from enum import Enum
 from picar_4wd import servo
-from obstacle_map import ObstacleMap
-from astar import astar
+# from obstacle_map import ObstacleMap
+# from astar import astar
 import time
 
 FORWARD_SPEED = 10
@@ -86,7 +86,7 @@ class Picar:
         self.time_to_turn_left_90 = TIME_TO_TURN_LEFT_90
 
 
-        self.obstacle_map = ObstacleMap(size=map_size)
+        # self.obstacle_map = ObstacleMap(size=map_size)
         self.x_location = int(self.obstacle_map.size / 2)
         self.y_location = 0
         self.orientation = Direction.NORTH
