@@ -149,25 +149,23 @@ class Picar:
 
     def forward(self) -> None:
         fc.forward(self.forward_speed)
-        fc.stop()
     
     def backward(self) -> None:
         fc.backward(self.backward_speed)
-        fc.stop()
 
     def stop(self) -> None:
         fc.stop()
 
     def turn_around(self):
         fc.turn_right(self.turning_speed)
-        time.sleep(2.3)
-        self.forward()
 
     def move_right(self):
         fc.turn_right(self.turning_speed)
+
         
     def move_left(self):
         fc.turn_left(self.turning_speed)
+
     
     def scan_env_and_map(self) -> None:
         self.angle_to_dist = {}
