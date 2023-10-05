@@ -1,5 +1,5 @@
 import socket
-
+from typing import Union
 from Picar import Picar
 
 HOST = "192.168.12.232" # IP address of your Raspberry PI
@@ -28,7 +28,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
     s.listen()
     
-    state: int | None = None
+    state: Union[int, None] = None
     car = Picar()
 
     try:
