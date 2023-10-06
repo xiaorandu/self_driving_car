@@ -12,7 +12,7 @@ def data_received(data):
 def send_status_update():
     i = 1
     while True:
-        s.send(f"Ping:...{i}\r\n")
+        s.send(f"Ping...{i}\r\n")
         i += 1
         time.sleep(1)
 
