@@ -4,6 +4,9 @@ import time
 from typing import Union
 from Picar import Picar
 import json
+import base64
+from picamera2 import Picamera2
+import libcamera
 
 #HOST = "192.168.12.232" # IP address of your Raspberry PI
 HOST = "192.168.0.144" # BR
@@ -13,8 +16,25 @@ last_received_time = time.time()  # Initialize with the current time
 
 car = Picar()
 
+def take_picture():
+    # newer method. Disable legacy camera support in raspi-config.
+    picam = Picamera2()
+    config = picam.create_preview_configuration(main={"size": (640, 480)})
+    config["transform"] = libcamera.Transform(hflip=1, vflip=1)
+    picam.configure(config)
+    picam.start()
+    time.sleep(2)
+    picam.capture_file("test-python.jpg")
+    picam.close()
+
+    with open('test-python.jpg', 'rb') as f:
+        image = base64.b64encode(f.read())
+        image = image.decode('utf-8')
+    return image
+
 return_data = {
-    "direction": car.orientation
+    "direction": car.orientation,
+    "image": take_picture()
 }
 
 def drive_car(car: Picar, direction: str):
@@ -32,6 +52,9 @@ def drive_car(car: Picar, direction: str):
         print("Right")
         car.move_right(5)
 
+    if direction in ['87','83','65','68']:
+        return_data["direction"] = car.orientation
+        return_data["image"] = take_picture()
 
 def monitor_last_received(car):
     global last_received_time
@@ -68,10 +91,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 state = decoded_data
                 
                 drive_car(car, decoded_data)
-                return_data["direction"] = car.orientation
-
+                # SEND DATA BACK TO ELECTRON CLIENT
                 client.sendall(json.dumps(return_data).encode('utf-8'))
-
+                client.close()
 
     except Exception as e:
         print(f"Exception:\t{e}") 
