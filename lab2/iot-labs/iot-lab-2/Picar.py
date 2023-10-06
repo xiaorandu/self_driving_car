@@ -1,5 +1,5 @@
 import picar_4wd as fc
-from enum import Enum
+from enum import IntEnum
 from picar_4wd import servo
 # from obstacle_map import ObstacleMap
 # from astar import astar
@@ -28,7 +28,7 @@ scan_list = []
 angle_to_dist = {}
 
 
-class Direction(Enum):
+class Direction(IntEnum):
     NORTH = 0
     EAST = 1
     SOUTH = 2
@@ -147,25 +147,67 @@ class Picar:
                 self.forward(distance)
         self.update_location_dist(direction, distance)
 
-    def forward(self) -> None:
-        fc.forward(self.forward_speed)
+    # def forward(self) -> None:
+    #     fc.forward(self.forward_speed)
     
-    def backward(self) -> None:
+    # def backward(self) -> None:
+    #     fc.backward(self.backward_speed)
+
+    # def stop(self) -> None:
+    #     fc.stop()
+
+    # def turn_around(self):
+    #     fc.turn_right(self.turning_speed)
+
+    # def move_right(self):
+    #     fc.turn_right(self.turning_speed)
+        
+    # def move_left(self):
+    #     fc.turn_left(self.turning_speed)
+
+    def forward(self, distance) -> None:
+        fc.forward(self.forward_speed)
+        time.sleep(self.sec_per_cm * distance)
+        fc.stop()
+    
+    def backward(self, distance) -> None:
         fc.backward(self.backward_speed)
+        time.sleep(self.sec_per_cm * distance)
+        fc.stop()
 
     def stop(self) -> None:
         fc.stop()
 
     def turn_around(self):
         fc.turn_right(self.turning_speed)
+        time.sleep(2.3)
+        self.forward()
 
-    def move_right(self):
+    def move_right(self, distance):
         fc.turn_right(self.turning_speed)
-
+        time.sleep(self.time_to_turn_right_90)
+        self.forward(distance)
+        if self.orientation == Direction.NORTH:
+            self.orientation = Direction.EAST
+        elif self.orientation == Direction.SOUTH:
+            self.orientation = Direction.WEST
+        elif self.orientation == Direction.EAST:
+            self.orientation = Direction.SOUTH
+        elif self.orientation == Direction.WEST:
+            self.orientation = Direction.NORTH
         
-    def move_left(self):
+    def move_left(self, distance):
         fc.turn_left(self.turning_speed)
-
+        time.sleep(self.time_to_turn_left_90)
+        self.forward(distance)
+        if self.orientation == Direction.NORTH:
+            self.orientation = Direction.WEST
+        elif self.orientation == Direction.SOUTH:
+            self.orientation = Direction.EAST
+        elif self.orientation == Direction.EAST:
+            self.orientation = Direction.NORTH
+        elif self.orientation == Direction.WEST:
+            self.orientation = Direction.SOUTH
     
     def scan_env_and_map(self) -> None:
         self.angle_to_dist = {}
