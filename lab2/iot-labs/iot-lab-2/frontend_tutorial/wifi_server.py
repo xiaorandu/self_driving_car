@@ -1,8 +1,11 @@
 import socket
+import sys
 
-from lab1.Picar import Picar
+#sys.path.insert(0, '../../../../lab1') # pwd of call to 'python wifi_server.py' is frontend_tutorial
+sys.path.insert(0, './lab1') # pwd of call to 'python wifi_server.py' is self_driving_car
+from Picar import Picar
 
-HOST = "192.168.12.232" # IP address of your Raspberry PI
+HOST = "192.168.0.144" # IP address of your Raspberry PI
 PORT = 65432          # Port to listen on (non-privileged ports are > 1023)
 
 
