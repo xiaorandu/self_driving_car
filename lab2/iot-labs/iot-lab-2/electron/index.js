@@ -40,11 +40,22 @@ function send_data(message) {
 
     const client = net.createConnection({ port: server_port, host: server_addr }, () => {
         console.log('connected to server!');
+        client.setEncoding('utf8');
         client.write(`${input}\r\n`);
     });
 
+    var dataBuffer = '';
+
     client.on('data', (data) => {
-        data = JSON.parse(data)
+        dataBuffer += data;
+        //client.end();
+        //client.destroy();
+    });
+
+    client.on('end', () => {
+
+        data = JSON.parse(dataBuffer)
+        console.log(data.toString());
 
         if (data.direction == 0) {
             data.direction = "North"
@@ -52,20 +63,19 @@ function send_data(message) {
         else if (data.direction == 1) {
             data.direction = "East"
         }
-        if (data.direction == 2) {
+        else if (data.direction == 2) {
             data.direction = "South"
         }
-        if (data.direction == 3) {
+        else if (data.direction == 3) {
             data.direction = "West"
         }
 
         document.getElementById("direction").innerHTML = data.direction;
-        console.log(data.toString());
-        client.end();
-        client.destroy();
-    });
+        
+        let img = document.getElementById('pics').setAttribute('src','data:image/jpeg;base64, ' + data.image)
 
-    client.on('end', () => {
+        dataBuffer = '';
+        client.destroy();
         console.log('disconnected from server');
     });
 }
