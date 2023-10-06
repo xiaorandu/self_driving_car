@@ -1,8 +1,8 @@
 import socket
 import sys
 
-#sys.path.insert(0, '../../../../lab1') # pwd of call to 'python wifi_server.py' is frontend_tutorial
-sys.path.insert(0, './lab1') # pwd of call to 'python wifi_server.py' is self_driving_car
+#sys.path.insert(0, '../../../../lab1') # pwd of call to 'python3 wifi_server.py' is frontend_tutorial
+sys.path.insert(0, './lab1') # pwd of call to 'python3 lab2/iot-labs/iot-lab-2/frontend_tutorial/wifi_server.py' is self_driving_car
 from Picar import Picar
 
 HOST = "192.168.0.144" # IP address of your Raspberry PI
