@@ -186,7 +186,7 @@ class Picar:
     def move_right(self, distance):
         fc.turn_right(self.turning_speed)
         time.sleep(self.time_to_turn_right_90)
-        self.forward(distance)
+        #self.forward(distance)
         if self.orientation == Direction.NORTH:
             self.orientation = Direction.EAST
         elif self.orientation == Direction.SOUTH:
@@ -199,7 +199,7 @@ class Picar:
     def move_left(self, distance):
         fc.turn_left(self.turning_speed)
         time.sleep(self.time_to_turn_left_90)
-        self.forward(distance)
+        #self.forward(distance)
         if self.orientation == Direction.NORTH:
             self.orientation = Direction.WEST
         elif self.orientation == Direction.SOUTH:
