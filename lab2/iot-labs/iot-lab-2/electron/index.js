@@ -44,7 +44,22 @@ function send_data(message) {
     });
 
     client.on('data', (data) => {
-        document.getElementById("bluetooth").innerHTML = data;
+        data = JSON.parse(data)
+
+        if (data.direction == 0) {
+            data.direction = "North"
+        }
+        else if (data.direction == 1) {
+            data.direction = "East"
+        }
+        if (data.direction == 2) {
+            data.direction = "South"
+        }
+        if (data.direction == 3) {
+            data.direction = "West"
+        }
+
+        document.getElementById("direction").innerHTML = data.direction;
         console.log(data.toString());
         client.end();
         client.destroy();
