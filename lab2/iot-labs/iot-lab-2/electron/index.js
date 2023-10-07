@@ -5,7 +5,8 @@ document.onkeyup = resetKey;
 
 var server_port = 65432;
 //var server_addr = "192.168.12.232";   // the IP address of your Raspberry PI
-var server_addr = "192.168.0.144"; // BR
+// var server_addr = "192.168.0.144"; // BR
+var server_addr = "192.168.0.22"; // XD
 
 function client(){
     
@@ -71,6 +72,10 @@ function send_data(message) {
         }
 
         document.getElementById("direction").innerHTML = data.direction;
+        document.getElementById("temperature").innerHTML = data.temperature;
+        document.getElementById("voltage").innerHTML = data.voltage;
+        document.getElementById("distance").innerHTML = data.distance;
+        document.getElementById("cpu").innerHTML = data.cpu_usage;
         
         let img = document.getElementById('pics').setAttribute('src','data:image/jpeg;base64, ' + data.image)
 
