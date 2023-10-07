@@ -62,6 +62,7 @@ return_data = {
 }
 
 def drive_car(car: Picar, direction: str):
+    global total_dist
     print(f"Drive car str:\t{direction}")
     if direction == '87':
         print("Forward")
