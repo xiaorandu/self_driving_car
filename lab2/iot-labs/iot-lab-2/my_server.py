@@ -7,15 +7,35 @@ import json
 import base64
 from picamera2 import Picamera2
 import libcamera
+from gpiozero import CPUTemperature
+import subprocess
+import psutil
 
 #HOST = "192.168.12.232" # IP address of your Raspberry PI
-HOST = "192.168.0.144" # BR
+# HOST = "192.168.0.144" # BR
+HOST = "192.168.0.22" #XD
 PORT = 65432          # Port to listen on (non-privileged ports are > 1023)
 
 last_received_time = time.time()  # Initialize with the current time
-
+total_dist = 0
 car = Picar()
 
+#get Raspberry CPU temperature from gpiozero package(pip install gpiozero)
+def get_temperature():
+    temperature =  '%.2f'%CPUTemperature().temperature
+    print(f"Temperature:\t{temperature}")
+    return temperature
+
+def get_cpu_usage():
+    cpu_usage = f"{psutil.cpu_percent(5)/100:.2%}"
+    print(f"cpu_usage:\t{cpu_usage}")
+    return cpu_usage
+
+def get_voltage():
+    voltage = subprocess.check_output("picar-4wd power-read | grep voltage | cut -d' ' -f3", shell=True, text=True)
+    print(f"Voltage:\t{voltage}")
+    return voltage
+    
 def take_picture():
     # newer method. Disable legacy camera support in raspi-config.
     picam = Picamera2()
@@ -34,7 +54,11 @@ def take_picture():
 
 return_data = {
     "direction": car.orientation,
-    "image": take_picture()
+    "image": take_picture(),
+    "temperature": get_temperature(),
+    "voltage":get_voltage(),
+    "distance": total_dist,
+    "cpu_usage":get_cpu_usage()
 }
 
 def drive_car(car: Picar, direction: str):
@@ -42,16 +66,22 @@ def drive_car(car: Picar, direction: str):
     if direction == '87':
         print("Forward")
         car.forward(5)
+        total_dist += 5
+        
     elif direction == '83':
         print("Backward")
         car.backward(5)
+        total_dist -= 5
+        
     elif direction == '65':
         print("Left")
         car.move_left(5)
     elif direction == '68':
         print("Right")
         car.move_right(5)
-
+        
+    print(f"distace:\t{total_dist}")
+    return_data["distance"] = total_dist
     if direction in ['87','83','65','68']:
         return_data["direction"] = car.orientation
         return_data["image"] = take_picture()
