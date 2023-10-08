@@ -45,16 +45,16 @@ class _MainPage extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chat Demo'),
+        title: const Text('Car Bluetooth Demo'),
       ),
       body: Container(
         child: ListView(
           children: <Widget>[
             Divider(),
-            ListTile(title: Text("Device: " + (_device == null? "..." : _device.name))),
+            ListTile(title: Text("Connected Bluetooth Device: " + (_device == null? "..." : _device.name))),
             ListTile(
               title: ElevatedButton(
-                child: const Text('Start Chat'),
+                child: const Text('Communicate over bluetooth'),
                 onPressed: () async {
                   if (_device != null) {
                     print('Connect -> selected ' + _device.address);
