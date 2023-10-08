@@ -78,21 +78,15 @@ class _AppPage extends State<AppPage> {
 
     return Scaffold(
       appBar: AppBar(
-          title: Text("Example App")),
+          title: Text("Communicate over bluetooth")),
       body: SafeArea(
         child: Column(
           children: <Widget>[
             command,
             ElevatedButton(
-                child: const Text('A'),
+                child: const Text('Request car voltage'),
                 onPressed: () {
-                  _sendMessage("A");
-                },
-            ),
-            ElevatedButton(
-                child: const Text('B'),
-                onPressed: () {
-                  _sendMessage("B");
+                  _sendMessage("v");
                 },
             ),
           ],
