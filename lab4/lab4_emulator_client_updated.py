@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 
 
-#TODO 1: modify the following parameters
+#1: modify the following parameters
 #Starting and end index, modify this
 device_st = 1
 device_end = 10
@@ -17,7 +17,9 @@ data_path = "data2/vehicle{}.csv"
 #Path to your certificates, modify this
 certificate_formatter = "./certificates/device_{}/device_{}.certificate.pem"
 key_formatter = "./certificates/device_{}/device_{}.private.pem"
-root_path = "./certificates/root"
+
+root_path = "./certificates/root.pem"
+endpoint_path = "a2bwa1ru0h9r7v-ats.iot.us-east-2.amazonaws.com"
 
 class MQTTClient:
     def __init__(self, device_id, cert, key):
@@ -26,7 +28,7 @@ class MQTTClient:
         self.state = 0
         self.client = AWSIoTMQTTClient(self.device_id)
         #TODO 2: modify your broker address
-        self.client.configureEndpoint("a2bwa1ru0h9r7v-ats.iot.us-east-1.amazonaws.com", 8883)
+        self.client.configureEndpoint(endpoint_path, 8883)
         self.client.configureCredentials(root_path, key, cert)
         self.client.configureOfflinePublishQueueing(-1)  # Infinite offline Publish queueing
         self.client.configureDrainingFrequency(2)  # Draining: 2 Hz
@@ -36,7 +38,7 @@ class MQTTClient:
         
 
     def customOnMessage(self,message):
-        #TODO3: fill in the function to show your received message
+        #3: fill in the function to show your received message
         print("client {} received payload {} from topic {}".format(self.device_id, message.payload, message.topic))
 
 
@@ -53,10 +55,10 @@ class MQTTClient:
 
 
     def publish(self, Payload="payload"):
-        #TODO4: fill in this function for your publish
-        self.client.subscribeAsync("myTopic", 0, ackCallback=self.customSubackCallback)
+        #4: fill in this function for your publish
+        self.client.subscribeAsync("HelloIoT", 0, ackCallback=self.customSubackCallback)
         
-        self.client.publishAsync("myTopic", Payload, 0, ackCallback=self.customPubackCallback)
+        self.client.publishAsync("HelloIoT", Payload, 0, ackCallback=self.customPubackCallback)
 
 
 
