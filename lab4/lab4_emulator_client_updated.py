@@ -21,6 +21,12 @@ key_formatter = "./certificates/device_{}/device_{}.private.pem"
 root_path = "./certificates/root.pem"
 endpoint_path = "a2bwa1ru0h9r7v-ats.iot.us-east-2.amazonaws.com"
 
+print("Loading vehicle data...")
+data = []
+for i in range(5):
+    a = pd.read_csv(data_path.format(i))
+    data.append(a)
+    
 class MQTTClient:
     def __init__(self, device_id, cert, key):
         # For certificate based connection
@@ -56,17 +62,16 @@ class MQTTClient:
 
     def publish(self, Payload="payload"):
         #4: fill in this function for your publish
-        self.client.subscribeAsync("HelloIoT", 0, ackCallback=self.customSubackCallback)
+        self.client.connect()
         
-        self.client.publishAsync("HelloIoT", Payload, 0, ackCallback=self.customPubackCallback)
-
-
-
-print("Loading vehicle data...")
-data = []
-for i in range(5):
-    a = pd.read_csv(data_path.format(i))
-    data.append(a)
+        id = int(self.device_id)
+        if id <= 5:
+            self.client.publishAsync("VehicleTopic_CO2", data[id - 1].vehicle_CO2.to_json(orient="values"), 0, ackCallback=self.customPubackCallback)
+            self.client.subscribeAsync("VehicleTopic_CO2", 0, ackCallback=self.customSubackCallback)
+        
+        elif 5 < id < 11:
+            self.client.subscribeAsync("VehicleTopic_fuel", 0, ackCallback=self.customSubackCallback)
+            self.client.publishAsync("VehicleTopic_fuel", data[id - 6].vehicle_fuel.to_json(orient="values"), 0, ackCallback=self.customPubackCallback)
 
 print("Initializing MQTTClients...")
 clients = []
