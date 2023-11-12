@@ -25,7 +25,7 @@ from AWSIoTPythonSDK.core.greengrass.discovery.providers import DiscoveryInfoPro
 from AWSIoTPythonSDK.core.protocol.connection.cores import ProgressiveBackOffCore
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 from AWSIoTPythonSDK.exception.AWSIoTExceptions import DiscoveryInvalidRequestException
-
+import csv
 import pandas as pd
 
 AllowedActions = ['both', 'publish', 'subscribe']
@@ -52,6 +52,9 @@ parser.add_argument("-M", "--message", action="store", dest="message", default="
 #--print_discover_resp_only used for delopyment testing. The test run will return 0 as long as the SDK installed correctly.
 parser.add_argument("-p", "--print_discover_resp_only", action="store_true", dest="print_only", default=False)
 
+parser.add_argument("--id", action="store", required=True,
+                    help="vehicle_id")
+
 #add vehicle data
 parser.add_argument("-d", "--data", action="store", dest="data", help="vehicle data")
 
@@ -64,7 +67,9 @@ clientId = args.thingName
 thingName = args.thingName
 topic = args.topic
 print_only = args.print_only
+
 data_file = args.data
+veh_id = args.id
 
 if args.mode not in AllowedActions:
     parser.error("Unknown --mode option %s. Must be one of %s" % (args.mode, str(AllowedActions)))
@@ -175,41 +180,41 @@ if not connected:
     print("Cannot connect to core %s. Exiting..." % coreInfo.coreThingArn)
     sys.exit(-2)
 
-# Successfully connected to the core
+# Function to convert a CSV to JSON
+# Takes the file paths as arguments
+def make_json(csvFilePath):
+     
+    # create a list to hold json objects for each row
+    data = []
+     
+    # Open a csv reader called DictReader
+    with open(csvFilePath, encoding='utf-8') as csvf:
+        csvReader = csv.DictReader(csvf)
+         
+        # Convert each row into a dictionary 
+        # and add it to data
+        for rows in csvReader:
+            data.append(rows)
+ 
+    return data
+
+subscribe_topic, publish_topic = f"emission/{veh_id}/max_co2", f"emission/{veh_id}"
+
+#call back function
+#Subscribe to the desired topic and register a callback.
+def subscribe(client, userdata, message):
+    print(f'{veh_id} recieved max_co2 data from the subscribed topic {subscribe_topic}:{message.payload}')
+    
 if args.mode == 'both' or args.mode == 'subscribe':
-    myAWSIoTMQTTClient.subscribe(topic, 0, None)
-    print('Subscribed to topic:', topic)
-time.sleep(1)
-
-# loopCount = 0
-# while True:
-#     if args.mode == 'both' or args.mode == 'publish':
-#         message = {}
-#         message['message'] = args.message
-#         message['sequence'] = loopCount
-#         messageJson = json.dumps(message)
-#         myAWSIoTMQTTClient.publish(topic, messageJson, 0)
-#         if args.mode == 'publish':
-#             print('Published topic %s: %s\n' % (topic, messageJson))
-#         loopCount += 1
-#     time.sleep(1)
+    myAWSIoTMQTTClient.subscribe(topic=subscribe_topic, QoS=0, callback=subscribe)
+    
 if args.mode == "publish":
-    #load data from vehicle csv file
-    veh_data = pd.read_csv(data_file)
-
-    #read csv file by rows
-    for _, data in veh_data.iterrows():
-        message = {}
-        message['timestep_time'] = data['timestep_time']
-        message['vehicle_CO'] = data['vehicle_CO']
-        message['vehicle_CO2'] = data['vehicle_CO2']
-        message['vehicle_HC'] = data['vehicle_HC']
-        message['vehicle_NOx'] = data['vehicle_NOx']
-        message['vehicle_PMx'] = data['vehicle_PMx']
-        message['vehicle_fuel'] = data['vehicle_fuel']
+    data = make_json(data_file)
+    for row in data:
+        json_message = json.dumps(row)
+        myAWSIoTMQTTClient.publish(
+        topic=publish_topic, QoS=0, payload=json_message)
+        print(f'{veh_id} published emission data to the topic {publish_topic}: {json_message}\n')
         
-        messageJson = json.dumps(message)
-        myAWSIoTMQTTClient.publish(topic, messageJson, 0)
-        if args.mode == 'publish':
-            print('Published topic %s: %s\n' % (topic, messageJson))
         time.sleep(1)
+    
